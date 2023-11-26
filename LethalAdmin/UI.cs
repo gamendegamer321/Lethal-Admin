@@ -138,16 +138,7 @@ public class UI : MonoBehaviour
 
     private void DrawBans()
     {
-        var players = KickBanTools.GetBannedPlayers();
         var steamIDs = KickBanTools.GetBannedSteamIDs();
-
-        foreach (var player in players)
-        {
-            if (GUILayout.Button("Unban: " + player))
-            {
-                KickBanTools.Unban(player);
-            }
-        }
 
         foreach (var steamID in steamIDs)
         {

@@ -5,23 +5,12 @@ namespace LethalAdmin;
 
 public static class KickBanTools
 {
-    private static readonly List<string> BannedPlayers = new();
     private static readonly List<ulong> BannedSteamIDs = new();
 
     public static void Unban(ulong steamID)
     {
         StartOfRound.Instance.KickedClientIds.Remove(steamID); // Make sure it's not in the banned list anymore
         BannedSteamIDs.Remove(steamID);
-    }
-    
-    public static void Unban(string player)
-    {
-        BannedPlayers.Remove(player);
-    }
-
-    public static string[] GetBannedPlayers()
-    {
-        return BannedPlayers.ToArray();
     }
 
     public static ulong[] GetBannedSteamIDs()
@@ -34,12 +23,12 @@ public static class KickBanTools
         List<PlayerInfo> players = new();
         var playerControllers = StartOfRound.Instance.allPlayerScripts;
         
-        for (var i = 0; i < playerControllers.Length; i++)
+        foreach (var player in playerControllers)
         {
             players.Add(new PlayerInfo()
             {
-                Username = playerControllers[i].playerUsername,
-                UsingWalkie = playerControllers[i].speakingToWalkieTalkie
+                Username = player.playerUsername,
+                UsingWalkie = player.speakingToWalkieTalkie
             });
         }
         
@@ -57,7 +46,6 @@ public static class KickBanTools
             
             if (controller.playerUsername != playerName) continue;
             
-            if (!BannedPlayers.Contains(controller.playerUsername)) BannedPlayers.Add(controller.playerUsername);
             if (!BannedSteamIDs.Contains(controller.playerSteamId)) BannedSteamIDs.Add(controller.playerSteamId);
             
             Plugin.Instance.LogInfo("Attempting to ban player: " + playerName + "@" + controller.playerSteamId);
