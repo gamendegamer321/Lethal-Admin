@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using LethalAdmin.Logging;
 using UnityEngine;
 
 namespace LethalAdmin;
@@ -13,8 +13,7 @@ public class UI : MonoBehaviour
 
     private ViewMode _currentViewMode = ViewMode.Users;
 
-    private readonly GUILayoutOption[] _options = new GUILayoutOption[]
-    {
+    private readonly GUILayoutOption[] _options = {
         GUILayout.Width(800),
         GUILayout.Height(400)
     };
@@ -129,7 +128,12 @@ public class UI : MonoBehaviour
 
     private void DrawLogs()
     {
-        
+        var logs = LethalLogger.GetLogs();
+
+        foreach (var log in logs)
+        {
+            GUILayout.Label(log.GetString());
+        }
     }
 
     private void DrawBans()

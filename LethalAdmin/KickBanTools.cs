@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using GameNetcodeStuff;
-using UnityEngine;
+using LethalAdmin.Logging;
 
 namespace LethalAdmin;
 
@@ -37,10 +36,11 @@ public static class KickBanTools
             
             if (controller.playerUsername != playerName) continue;
             
-            Plugin.Instance.LogInfo("Attempting to ban player: " + playerName + "@" + controller.playerSteamId);
-            
             if (!BannedPlayers.Contains(controller.playerUsername)) BannedPlayers.Add(controller.playerUsername);
             if (!BannedSteamIDs.Contains(controller.playerSteamId)) BannedSteamIDs.Add(controller.playerSteamId);
+            
+            Plugin.Instance.LogInfo("Attempting to ban player: " + playerName + "@" + controller.playerSteamId);
+            LethalLogger.AddLog(new BanLog(controller.playerUsername, controller.playerSteamId));
             
             StartOfRound.Instance.KickPlayer(id);
             return;
@@ -57,6 +57,7 @@ public static class KickBanTools
             if (playerControllers[id].playerUsername != playerName) continue;
             
             Plugin.Instance.LogInfo("Attempting to kick player: " + playerName);
+            LethalLogger.AddLog(new KickLog(playerName));
             
             StartOfRound.Instance.KickPlayer(id);
             return;
