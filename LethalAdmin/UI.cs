@@ -99,6 +99,10 @@ public class UI : MonoBehaviour
         }
 
         GUILayout.EndHorizontal();
+        if (GUILayout.Button("Toggle ship lights"))
+        {
+            StartOfRound.Instance.shipRoomLights.ToggleShipLights();
+        }
         GUILayout.EndVertical();
         GUI.DragWindow(new Rect(0, 0, 10000, 500));
     }
