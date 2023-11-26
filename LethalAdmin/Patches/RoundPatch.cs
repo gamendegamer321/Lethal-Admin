@@ -15,19 +15,7 @@ public class RoundPatch
         __instance.KickedClientIds.AddRange(KickBanTools.GetBannedSteamIDs());
     }
     
-    [HarmonyPatch("OnPlayerConnectedClientRpc")]
-    [HarmonyPostfix]
-    public static void OnPlayerJoin(StartOfRound __instance, Object[] __args)
-    {
-        var playerID = (int) __args[3];
-
-        if (playerID < __instance.allPlayerScripts.Length)
-        {
-            LethalLogger.AddLog(new JoinLog(__instance.allPlayerScripts[playerID].playerUsername));
-        }
-    }
-    
-    [HarmonyPatch("OnPlayerConnectedClientRpc")]
+    [HarmonyPatch("OnPlayerDC")]
     [HarmonyPrefix]
     public static void OnPlayerDisconnect(StartOfRound __instance, Object[] __args)
     {
