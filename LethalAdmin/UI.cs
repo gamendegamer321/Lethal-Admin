@@ -16,6 +16,11 @@ public class UI : MonoBehaviour
         GUILayout.Height(400)
     };
 
+    private readonly GUILayoutOption[] _labelOptions =
+    {
+        GUILayout.MinWidth(300)
+    };
+
     private Vector2 _scrollPosition;
     private ViewMode _currentViewMode = ViewMode.Users;
     private bool _menuAlwaysOpen;
@@ -117,7 +122,7 @@ public class UI : MonoBehaviour
         foreach (var player in players)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label((player.UsingWalkie ? "[X] " : "[ ] ") + player.Username);
+            GUILayout.Label(player.Username, _labelOptions);
 
             if (GUILayout.Button("Kick"))
             {
@@ -128,6 +133,8 @@ public class UI : MonoBehaviour
             {
                 KickBanTools.BanPlayer(player.Username);
             }
+
+            GUILayout.Toggle(player.UsingWalkie, "Using walkie: ");
             
             GUILayout.EndHorizontal();
         }
