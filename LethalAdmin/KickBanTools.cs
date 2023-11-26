@@ -10,6 +10,7 @@ public static class KickBanTools
 
     public static void Unban(ulong steamID)
     {
+        StartOfRound.Instance.KickedClientIds.Remove(steamID); // Make sure it's not in the banned list anymore
         BannedSteamIDs.Remove(steamID);
     }
     
@@ -83,23 +84,7 @@ public static class KickBanTools
             return;
         }
     }
-
-    public static void KickBannedPlayers() // Simply try to kick all banned players (in case one managed to slip by)
-    {
-        var playerControllers = StartOfRound.Instance.allPlayerScripts;
-
-        for (var id = 0; id < playerControllers.Length; id++)
-        {
-            var controller = playerControllers[id];
-
-            if (BannedPlayers.Contains(controller.playerUsername) ||
-                BannedSteamIDs.Contains(controller.playerSteamId))
-            {
-                StartOfRound.Instance.KickPlayer(id);
-            }
-        }
-    }
-
+    
     public class PlayerInfo
     {
         public string Username;
