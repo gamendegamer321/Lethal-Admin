@@ -26,4 +26,16 @@ public class RoundPatch
             LethalLogger.AddLog(new DisconnectLog(__instance.allPlayerScripts[playerID].playerUsername));
         }
     }
+    
+    [HarmonyPatch("EndGameClientRpc")]
+    [HarmonyPostfix]
+    public static void OnShipLeave(StartOfRound __instance, Object[] __args)
+    {
+        var playerID = (int) __args[0];
+
+        if (playerID < __instance.allPlayerScripts.Length)
+        {
+            LethalLogger.AddLog(new DepartLog(__instance.allPlayerScripts[playerID].playerUsername));
+        }
+    }
 }
