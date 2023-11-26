@@ -10,8 +10,8 @@ public class BanLog : LogBase
         _username = username;
         _steamID = steamID;
     }
-    
-    public override string GetString()
+
+    protected override string GetString()
     {
         return "[BanLog] The user " + _username + "@" + _steamID + " has been banned";
     }

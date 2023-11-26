@@ -132,7 +132,7 @@ public class UI : MonoBehaviour
 
         foreach (var log in logs)
         {
-            GUILayout.Label(log.GetString());
+            GUILayout.Label(log.GetTimeFormattedString());
         }
     }
 

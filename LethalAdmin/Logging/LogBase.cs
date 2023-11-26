@@ -1,6 +1,17 @@
-﻿namespace LethalAdmin.Logging;
+﻿using System;
+using UnityEngine;
+
+namespace LethalAdmin.Logging;
 
 public abstract class LogBase
 {
-    public abstract string GetString();
+    private readonly float _time = Time.realtimeSinceStartup;
+
+    protected abstract string GetString();
+
+    public string GetTimeFormattedString()
+    {
+        var t = TimeSpan.FromSeconds(_time);
+        return "[" + t.ToString("hh':'mm':'ss") + "] " + GetString();
+    }
 }

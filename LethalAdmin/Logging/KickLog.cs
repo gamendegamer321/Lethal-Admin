@@ -8,8 +8,8 @@ public class KickLog : LogBase
     {
         _username = username;
     }
-    
-    public override string GetString()
+
+    protected override string GetString()
     {
         return "[KickLog] The user " + _username + " has been kicked";
     }
