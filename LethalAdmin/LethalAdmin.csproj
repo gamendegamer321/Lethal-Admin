@@ -2,8 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <AssemblyName>LethalCompanyTemplate</AssemblyName>
-        <Description>A template for Lethal Company</Description>
+        <AssemblyName>LethalAdmin</AssemblyName>
+        <Description>An admin tool for lethal company</Description>
         <Version>1.0.0</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>latest</LangVersion>
@@ -16,6 +16,15 @@
         <PackageReference Include="UnityEngine.Modules" Version="2022.3.9" IncludeAssets="compile" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>..\external_dlls\Assembly-CSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="Netcode">
+            <HintPath>..\external_dlls\Unity.Netcode.Runtime.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all"/>
     </ItemGroup>
