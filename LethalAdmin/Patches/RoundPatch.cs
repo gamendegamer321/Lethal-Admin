@@ -1,4 +1,6 @@
+using System;
 using HarmonyLib;
+using LethalAdmin.Logging;
 
 namespace LethalAdmin.Patches;
 
@@ -11,5 +13,29 @@ public class RoundPatch
     {
         __instance.KickedClientIds.Clear();
         __instance.KickedClientIds.AddRange(KickBanTools.GetBannedSteamIDs());
+    }
+    
+    [HarmonyPatch("OnPlayerConnectedClientRpc")]
+    [HarmonyPostfix]
+    public static void OnPlayerJoin(StartOfRound __instance, Object[] __args)
+    {
+        var playerID = (int) __args[3];
+
+        if (playerID < __instance.allPlayerScripts.Length)
+        {
+            LethalLogger.AddLog(new JoinLog(__instance.allPlayerScripts[playerID].playerUsername));
+        }
+    }
+    
+    [HarmonyPatch("OnPlayerConnectedClientRpc")]
+    [HarmonyPrefix]
+    public static void OnPlayerDisconnect(StartOfRound __instance, Object[] __args)
+    {
+        var playerID = (int) __args[1];
+
+        if (playerID < __instance.allPlayerScripts.Length)
+        {
+            LethalLogger.AddLog(new DisconnectLog(__instance.allPlayerScripts[playerID].playerUsername));
+        }
     }
 }
