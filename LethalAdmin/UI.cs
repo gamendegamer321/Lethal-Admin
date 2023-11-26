@@ -11,14 +11,15 @@ public class UI : MonoBehaviour
 
     private Rect _windowRect;
 
-    private ViewMode _currentViewMode = ViewMode.Users;
-
     private readonly GUILayoutOption[] _options = {
         GUILayout.Width(800),
         GUILayout.Height(400)
     };
 
     private Vector2 _scrollPosition;
+    private ViewMode _currentViewMode = ViewMode.Users;
+    private bool _menuAlwaysOpen;
+    
     public void Awake()
     {
         Instances.Add(this);
@@ -53,7 +54,7 @@ public class UI : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!StartOfRound.Instance.IsServer || !_menuOpen) return;
+        if (!StartOfRound.Instance.IsServer || (!_menuOpen && !_menuAlwaysOpen)) return;
 
         var controlID = GUIUtility.GetControlID(FocusType.Passive);
         _windowRect = GUILayout.Window(controlID, _windowRect, DrawUI, "Lethal Admin Menu", _options);
@@ -103,6 +104,8 @@ public class UI : MonoBehaviour
         {
             StartOfRound.Instance.shipRoomLights.ToggleShipLights();
         }
+
+        _menuAlwaysOpen = GUILayout.Toggle(_menuAlwaysOpen, "Always show menu");
         GUILayout.EndVertical();
         GUI.DragWindow(new Rect(0, 0, 10000, 500));
     }
