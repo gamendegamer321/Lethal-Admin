@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,15 +11,15 @@ public class UI : MonoBehaviour
 
     private Rect _windowRect;
 
-    private GUILayoutOption[] _options = new GUILayoutOption[]
+    private ViewMode _currentViewMode = ViewMode.Users;
+
+    private readonly GUILayoutOption[] _options = new GUILayoutOption[]
     {
         GUILayout.Width(800),
         GUILayout.Height(400)
     };
 
-    private Vector2 scrollPosition;
-    private bool toggleToggled;
-
+    private Vector2 _scrollPosition;
     public void Awake()
     {
         Instances.Add(this);
@@ -61,11 +62,52 @@ public class UI : MonoBehaviour
 
     private void DrawUI(int windowID)
     {
+        GUILayout.BeginVertical();
+        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
+
+        switch (_currentViewMode)
+        {
+            case ViewMode.Users:
+                DrawUsers();
+                break;
+            case ViewMode.Bans:
+                DrawBans();
+                break;
+            case ViewMode.Logs:
+                DrawLogs();
+                break;
+            default:
+                DrawUsers();
+                break;
+        }
+
+        GUILayout.EndScrollView();
+        GUILayout.BeginHorizontal();
+
+        if (GUILayout.Button("Users"))
+        {
+            _currentViewMode = ViewMode.Users;
+        }
+
+        if (GUILayout.Button("Logs"))
+        {
+            _currentViewMode = ViewMode.Logs;
+        }
+        
+        if (GUILayout.Button("Bans"))
+        {
+            _currentViewMode = ViewMode.Bans;
+        }
+
+        GUILayout.EndHorizontal();
+        GUILayout.EndVertical();
+        GUI.DragWindow(new Rect(0, 0, 10000, 500));
+    }
+
+    private void DrawUsers()
+    {
         var players = KickBanTools.GetPlayers();
         
-        GUILayout.BeginVertical();
-        scrollPosition = GUILayout.BeginScrollView(scrollPosition, false, true);
-
         foreach (var player in players)
         {
             GUILayout.BeginHorizontal();
@@ -83,21 +125,20 @@ public class UI : MonoBehaviour
             
             GUILayout.EndHorizontal();
         }
+    }
 
-        GUILayout.EndScrollView();
-        GUILayout.BeginHorizontal();
+    private void DrawLogs()
+    {
+        
+    }
 
-        if (GUILayout.Button("Clear"))
-        {
-        }
+    private void DrawBans()
+    {
+        
+    }
 
-        if (GUILayout.Button("Clear Control Locks"))
-        {
-        }
-
-        GUILayout.EndHorizontal();
-        toggleToggled = (GUILayout.Toggle(toggleToggled, "toggle"));
-        GUILayout.EndVertical();
-        GUI.DragWindow(new Rect(0, 0, 10000, 500));
+    private enum ViewMode
+    {
+        Users, Logs, Bans
     }
 }
