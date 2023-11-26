@@ -7,7 +7,7 @@ namespace LethalAdmin;
 public class UI : MonoBehaviour
 {
     private static readonly List<UI> Instances = new();
-    private bool _menuOpen = false;
+    private bool _menuOpen;
 
     private Rect _windowRect;
 
@@ -138,7 +138,24 @@ public class UI : MonoBehaviour
 
     private void DrawBans()
     {
-        
+        var players = KickBanTools.GetBannedPlayers();
+        var steamIDs = KickBanTools.GetBannedSteamIDs();
+
+        foreach (var player in players)
+        {
+            if (GUILayout.Button("Unban: " + player))
+            {
+                KickBanTools.Unban(player);
+            }
+        }
+
+        foreach (var steamID in steamIDs)
+        {
+            if (GUILayout.Button("Unban: " + steamID + "@steam"))
+            {
+                KickBanTools.Unban(steamID);
+            }
+        }
     }
 
     private enum ViewMode

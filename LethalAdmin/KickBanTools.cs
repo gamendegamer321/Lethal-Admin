@@ -7,6 +7,26 @@ public static class KickBanTools
 {
     private static readonly List<string> BannedPlayers = new();
     private static readonly List<ulong> BannedSteamIDs = new();
+
+    public static void Unban(ulong steamID)
+    {
+        BannedSteamIDs.Remove(steamID);
+    }
+    
+    public static void Unban(string player)
+    {
+        BannedPlayers.Remove(player);
+    }
+
+    public static string[] GetBannedPlayers()
+    {
+        return BannedPlayers.ToArray();
+    }
+
+    public static ulong[] GetBannedSteamIDs()
+    {
+        return BannedSteamIDs.ToArray();
+    }
     
     public static List<PlayerInfo> GetPlayers()
     {
