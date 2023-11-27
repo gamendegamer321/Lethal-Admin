@@ -15,20 +15,25 @@ public static class KickBanTools
     
     public static List<PlayerInfo> GetPlayers()
     {
-        List<PlayerInfo> players = new();
         var playerControllers = StartOfRound.Instance.allPlayerScripts;
-        
-        foreach (var player in playerControllers)
+
+        return playerControllers.Select(player => new PlayerInfo
+        { 
+            Username = player.playerUsername, 
+            SteamID = player.playerSteamId, 
+            UsingWalkie = player.speakingToWalkieTalkie
+        }).ToList();
+    }
+
+    internal static void SetBannedPLayers(List<PlayerInfo> bans)
+    {
+        BannedUsers.Clear();
+        BannedUsers.AddRange(bans);
+
+        foreach (var ban in bans) // Also add all bans to the kicked list
         {
-            players.Add(new PlayerInfo()
-            {
-                Username = player.playerUsername,
-                SteamID = player.playerSteamId,
-                UsingWalkie = player.speakingToWalkieTalkie
-            });
+            StartOfRound.Instance.KickedClientIds.Add(ban.SteamID);
         }
-        
-        return players;
     }
 
     public static void BanPlayer(PlayerInfo playerInfo)
@@ -51,6 +56,7 @@ public static class KickBanTools
             return;
         }
         
+        Plugin.Instance.AddConfigBan(playerInfo.SteamID);
         BannedUsers.Add(playerInfo); // Add the player to the ban list and then kick them
         LethalLogger.AddLog(new Log(
             $"[Ban] {playerInfo} has been banned"
@@ -61,6 +67,7 @@ public static class KickBanTools
     {
         StartOfRound.Instance.KickedClientIds.Remove(player.SteamID); // Make sure it's not in the banned list anymore
         BannedUsers.Remove(player);
+        Plugin.Instance.RemoveConfigBan(player.SteamID);
     }
     
     public static void KickPlayer(PlayerInfo playerInfo)

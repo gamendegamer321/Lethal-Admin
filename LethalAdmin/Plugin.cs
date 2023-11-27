@@ -1,4 +1,7 @@
-﻿using BepInEx;
+﻿using System.Collections.Generic;
+using System.Text;
+using BepInEx;
+using BepInEx.Configuration;
 using HarmonyLib;
 using LethalAdmin.Patches;
 
@@ -7,9 +10,11 @@ namespace LethalAdmin
     [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", "1.0.0")]
     public class Plugin : BaseUnityPlugin
     {
-        private readonly Harmony _harmony = new Harmony("LethalAdmin");
+        private readonly Harmony _harmony = new("LethalAdmin");
         public static Plugin Instance;
-        
+
+        private ConfigEntry<string> Bans;
+
         private void Awake()
         {
             Logger.LogInfo("Starting Lethal Admin");
@@ -18,11 +23,54 @@ namespace LethalAdmin
             _harmony.PatchAll(typeof(ControllerPatch));
 
             Instance = this;
+            Bans = Config.Bind("Lethal Admin", "bans", "", 
+                "The steam IDs of all banned players, comma seperated");
+
+            LoadConfigBans();
             
             Logger.LogInfo("Finished starting Lethal Admin");
         }
 
-        public void LogInfo(string message)
+        private void LoadConfigBans()
+        {
+            var bansList = Bans.Value.Split(",");
+            var bannedPlayers = new List<KickBanTools.PlayerInfo>();
+            
+            foreach (var id in bansList)
+            {
+                if (!ulong.TryParse(id, out var idValue)) continue;
+                bannedPlayers.Add(new KickBanTools.PlayerInfo { SteamID = idValue, Username = "UNKNOWN"});
+            }
+            
+            KickBanTools.SetBannedPLayers(bannedPlayers);
+        }
+
+        internal void AddConfigBan(ulong value)
+        {
+            if (Bans.Value.Length != 0) Bans.Value += ",";
+            Bans.Value += value;
+            
+            Config.Save();
+        }
+
+        internal void RemoveConfigBan(ulong value)
+        {
+            var bansList = Bans.Value.Split(",");
+            var newBansList = new StringBuilder();
+
+            foreach (var ban in bansList)
+            {
+                if (!ulong.TryParse(ban, out var id)) continue;
+                if (id == value) continue;
+                if (newBansList.Length != 0) newBansList.Append(",");
+                newBansList.Append(id);
+            }
+
+            Bans.Value = newBansList.ToString();
+            Config.Save();
+        }
+        
+        internal void LogInfo(string message)
         {
             Logger.LogInfo(message);
         }

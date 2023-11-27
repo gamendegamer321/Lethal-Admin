@@ -25,12 +25,12 @@ public class UI : MonoBehaviour
     private ViewMode _currentViewMode = ViewMode.Users;
     private bool _menuAlwaysOpen;
     
-    public void Awake()
+    private void Awake()
     {
         Instances.Add(this);
     }
 
-    public void OnDestroy()
+    private void OnDestroy()
     {
         Instances.Remove(this);
     }
@@ -52,7 +52,7 @@ public class UI : MonoBehaviour
         }
     }
 
-    public void SetMenu(bool value)
+    private void SetMenu(bool value)
     {
         _menuOpen = value;
     }
@@ -125,14 +125,17 @@ public class UI : MonoBehaviour
             GUILayout.BeginHorizontal();
             GUILayout.Label($"({id}) {player}", _labelOptions);
 
-            if (GUILayout.Button("Kick"))
+            if (id != 0) // Owner should not kick/ban themselves
             {
-                KickBanTools.KickPlayer(player);
-            }
-            
-            if (GUILayout.Button("Ban"))
-            {
-                KickBanTools.BanPlayer(player);
+                if (GUILayout.Button("Kick"))
+                {
+                    KickBanTools.KickPlayer(player);
+                }
+
+                if (GUILayout.Button("Ban"))
+                {
+                    KickBanTools.BanPlayer(player);
+                }
             }
 
             GUILayout.Toggle(player.UsingWalkie, "Using walkie");

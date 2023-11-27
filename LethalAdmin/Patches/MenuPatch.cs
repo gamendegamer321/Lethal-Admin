@@ -10,7 +10,6 @@ public class MenuPatch
     public static void OnOpenMenu()
     {
         UI.SetMenuForAll(true);
-        Plugin.Instance.LogInfo("Opening menu");
     }
     
     [HarmonyPatch("CloseQuickMenu")]
@@ -18,6 +17,5 @@ public class MenuPatch
     public static void OnCloseMenu()
     {
         UI.SetMenuForAll(false);
-        Plugin.Instance.LogInfo("Closing menu");
     }
 }
