@@ -7,8 +7,15 @@ Download the LethalAdmin.dll from the releases page. Paste the dll into ``path_t
 ## Kicking and banning
 The mod overrides the kick/ban system.
 When kick the player is able to rejoin, but when banning the player is unable to rejoin. 
-It is now also possible to unban a player using their steamID
+You can unban a player in the Bans tab by clicking the unban button for that player
 
 ## Radio
-To prevent radio spam, you can view who is talking on the radio with the "[ ]" or "[X]" in front of the username.
-The "[X]" indicates that the player is using their radio.
+To prevent radio spam, you can view who is talking on the radio with the toggle to the right of the kick/ban button.
+
+## Actions
+You can toggle the lights switch of the ship using a button in the admin pannel.
+
+## Planned
+ - Persistent bans (bans will be kept between sessions, instead of resetting after rebooting the game)
+ - Send ship from admin pannel
+ - Log who voted for early autopilot
