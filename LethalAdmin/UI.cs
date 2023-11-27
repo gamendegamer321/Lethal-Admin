@@ -118,11 +118,12 @@ public class UI : MonoBehaviour
     private void DrawUsers()
     {
         var players = KickBanTools.GetPlayers();
+        var id = 0;
         
         foreach (var player in players)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(player.ToString(), _labelOptions);
+            GUILayout.Label($"({id}) {player}", _labelOptions);
 
             if (GUILayout.Button("Kick"))
             {
@@ -137,6 +138,8 @@ public class UI : MonoBehaviour
             GUILayout.Toggle(player.UsingWalkie, "Using walkie");
             
             GUILayout.EndHorizontal();
+
+            id++;
         }
     }
 

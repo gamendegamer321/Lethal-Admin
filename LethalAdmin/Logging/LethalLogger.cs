@@ -17,7 +17,7 @@ public static class LethalLogger
         }
     }
 
-    public static Log[] GetLogs()
+    public static IEnumerable<Log> GetLogs()
     {
         return Logs.ToArray();
     }

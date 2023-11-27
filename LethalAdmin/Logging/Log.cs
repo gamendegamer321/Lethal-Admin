@@ -19,6 +19,6 @@ public class Log
     public string GetTimeFormattedString()
     {
         var t = TimeSpan.FromSeconds(_time);
-        return $"[{Prefix}] [{t:hh':'mm':'ss}] {_message}";
+        return $"[{t:hh':'mm':'ss}] [{Prefix}] {_message}";
     }
 }
