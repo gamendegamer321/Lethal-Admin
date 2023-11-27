@@ -7,7 +7,7 @@ namespace LethalAdmin.Patches;
 [HarmonyPatch(typeof(PlayerControllerB))]
 public class ControllerPatch
 {
-    [HarmonyPatch("OnPlayerConnectedClientRpc")]
+    [HarmonyPatch("ConnectClientToPlayerObject")]
     [HarmonyPostfix]
     public static void OnPlayerJoin(PlayerControllerB __instance)
     { 

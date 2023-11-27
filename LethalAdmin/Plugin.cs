@@ -15,6 +15,7 @@ namespace LethalAdmin
             Logger.LogInfo("Starting Lethal Admin");
             _harmony.PatchAll(typeof(RoundPatch));
             _harmony.PatchAll(typeof(MenuPatch));
+            _harmony.PatchAll(typeof(ControllerPatch));
 
             Instance = this;
             

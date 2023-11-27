@@ -134,7 +134,7 @@ public class UI : MonoBehaviour
                 KickBanTools.BanPlayer(player.Username);
             }
 
-            GUILayout.Toggle(player.UsingWalkie, "Using walkie: ");
+            GUILayout.Toggle(player.UsingWalkie, "Using walkie");
             
             GUILayout.EndHorizontal();
         }
