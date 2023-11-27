@@ -11,6 +11,8 @@ public class ControllerPatch
     [HarmonyPostfix]
     public static void OnPlayerJoin(PlayerControllerB __instance)
     { 
-        LethalLogger.AddLog(new JoinLog(__instance.playerUsername));
+        LethalLogger.AddLog(new Log(
+            $"[Connect] {__instance.playerUsername} ({__instance.playerSteamId}@steam) has joined"
+        ));
     }
 }

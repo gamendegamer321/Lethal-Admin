@@ -5,17 +5,11 @@ namespace LethalAdmin;
 
 public static class KickBanTools
 {
-    private static readonly List<ulong> BannedSteamIDs = new();
+    private static readonly List<PlayerInfo> BannedUsers = new();
 
-    public static void Unban(ulong steamID)
+    public static PlayerInfo[] GetBannedUsers()
     {
-        StartOfRound.Instance.KickedClientIds.Remove(steamID); // Make sure it's not in the banned list anymore
-        BannedSteamIDs.Remove(steamID);
-    }
-
-    public static ulong[] GetBannedSteamIDs()
-    {
-        return BannedSteamIDs.ToArray();
+        return BannedUsers.ToArray();
     }
     
     public static List<PlayerInfo> GetPlayers()
@@ -28,6 +22,7 @@ public static class KickBanTools
             players.Add(new PlayerInfo()
             {
                 Username = player.playerUsername,
+                SteamID = player.playerSteamId,
                 UsingWalkie = player.speakingToWalkieTalkie
             });
         }
@@ -35,40 +30,52 @@ public static class KickBanTools
         return players;
     }
 
-    public static void BanPlayer(string playerName)
+    public static void BanPlayer(PlayerInfo playerInfo)
     {
         var playerControllers = StartOfRound.Instance.allPlayerScripts;
-        Plugin.Instance.LogInfo("Searching for player " + playerName);
         
         for (var id = 0; id < playerControllers.Length; id++)
         {
-            var controller = playerControllers[id];
+            if (playerControllers[id].playerSteamId != playerInfo.SteamID) continue; // Check if this is the steamID we want to ban
             
-            if (controller.playerUsername != playerName) continue;
+            if (BannedUsers.Contains(playerInfo)) // If the player is already banned don't ban the again
+            {
+                LethalLogger.AddLog(new Log(
+                        $"[Ban] Could not ban {playerInfo} as this user is already banned", "Error"
+                        ));
+            }
             
-            if (!BannedSteamIDs.Contains(controller.playerSteamId)) BannedSteamIDs.Add(controller.playerSteamId);
-            
-            Plugin.Instance.LogInfo("Attempting to ban player: " + playerName + "@" + controller.playerSteamId);
-            LethalLogger.AddLog(new BanLog(controller.playerUsername, controller.playerSteamId));
-            
+            BannedUsers.Add(playerInfo); // Add the player to the ban list and then kick them
             StartOfRound.Instance.KickPlayer(id);
+            
+            LethalLogger.AddLog(new Log(
+                $"[Ban] {playerInfo} has been banned"
+            ));
+            
             return;
         }
     }
     
-    public static void KickPlayer(string playerName)
+    public static void UnbanPlayer(PlayerInfo player)
+    {
+        StartOfRound.Instance.KickedClientIds.Remove(player.SteamID); // Make sure it's not in the banned list anymore
+        BannedUsers.Remove(player);
+    }
+    
+    public static void KickPlayer(PlayerInfo playerInfo)
     {
         var playerControllers = StartOfRound.Instance.allPlayerScripts;
-        Plugin.Instance.LogInfo("Searching for player " + playerName);
+        Plugin.Instance.LogInfo("Searching for player " + playerInfo);
         
         for (var id = 0; id < playerControllers.Length; id++)
         {
-            if (playerControllers[id].playerUsername != playerName) continue;
-            
-            Plugin.Instance.LogInfo("Attempting to kick player: " + playerName);
-            LethalLogger.AddLog(new KickLog(playerName));
+            if (playerControllers[id].playerUsername != playerInfo.Username) continue;
             
             StartOfRound.Instance.KickPlayer(id);
+            
+            LethalLogger.AddLog(new Log(
+                $"[Kick] {playerInfo} has been kicked"
+            ));
             return;
         }
     }
@@ -76,6 +83,12 @@ public static class KickBanTools
     public class PlayerInfo
     {
         public string Username;
+        public ulong SteamID;
         public bool UsingWalkie;
+
+        public override string ToString()
+        {
+            return $"{Username} ({SteamID}@steam)";
+        }
     }
 }

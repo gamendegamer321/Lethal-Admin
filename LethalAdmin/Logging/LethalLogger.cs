@@ -5,9 +5,9 @@ namespace LethalAdmin.Logging;
 public static class LethalLogger
 {
     private const int MaxLogCount = 50;
-    private static readonly List<LogBase> Logs = new();
+    private static readonly List<Log> Logs = new();
 
-    public static void AddLog(LogBase log)
+    public static void AddLog(Log log)
     {
         Logs.Add(log);
         
@@ -17,7 +17,7 @@ public static class LethalLogger
         }
     }
 
-    public static LogBase[] GetLogs()
+    public static Log[] GetLogs()
     {
         return Logs.ToArray();
     }

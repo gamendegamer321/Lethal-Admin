@@ -122,16 +122,16 @@ public class UI : MonoBehaviour
         foreach (var player in players)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(player.Username, _labelOptions);
+            GUILayout.Label(player.ToString(), _labelOptions);
 
             if (GUILayout.Button("Kick"))
             {
-                KickBanTools.KickPlayer(player.Username);
+                KickBanTools.KickPlayer(player);
             }
             
             if (GUILayout.Button("Ban"))
             {
-                KickBanTools.BanPlayer(player.Username);
+                KickBanTools.BanPlayer(player);
             }
 
             GUILayout.Toggle(player.UsingWalkie, "Using walkie");
@@ -152,14 +152,19 @@ public class UI : MonoBehaviour
 
     private void DrawBans()
     {
-        var steamIDs = KickBanTools.GetBannedSteamIDs();
+        var players = KickBanTools.GetBannedUsers();
 
-        foreach (var steamID in steamIDs)
+        foreach (var player in players)
         {
-            if (GUILayout.Button("Unban: " + steamID + "@steam"))
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(player.ToString(), _labelOptions);
+            
+            if (GUILayout.Button($"Unban"))
             {
-                KickBanTools.Unban(steamID);
+                KickBanTools.UnbanPlayer(player);
             }
+            
+            GUILayout.EndHorizontal();
         }
     }
 
