@@ -1,0 +1,9 @@
+﻿{
+  "name": "Lethal Admin",
+  "version_number": "1.0.2",
+  "website_url": "https://github.com/gamendegamer321/Lethal-Admin",
+  "descriptions": "A mod that adds a few admin tools",
+  "dependencies": [
+    "BepInEx-BepInExPack-5.4.2100"
+  ]
+}
