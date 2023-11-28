@@ -110,6 +110,16 @@ public class UI : MonoBehaviour
             StartOfRound.Instance.shipRoomLights.ToggleShipLights();
         }
 
+        if (StartOfRound.Instance.connectedPlayersAmount + 1 - StartOfRound.Instance.livingPlayers > 1) // Requires at least 1 dead player
+        {
+            if (GUILayout.Button("Increase departure vote [Experimental]"))
+            {
+                var time = TimeOfDay.Instance;
+                time.votedShipToLeaveEarlyThisRound = false; // Act like we didn't vote yet
+                time.VoteShipToLeaveEarly();
+            }
+        }
+
         _menuAlwaysOpen = GUILayout.Toggle(_menuAlwaysOpen, "Always show menu");
         GUILayout.EndVertical();
         GUI.DragWindow(new Rect(0, 0, 10000, 500));
