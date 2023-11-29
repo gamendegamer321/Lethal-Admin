@@ -21,6 +21,7 @@ namespace LethalAdmin
             _harmony.PatchAll(typeof(RoundPatch));
             _harmony.PatchAll(typeof(MenuPatch));
             _harmony.PatchAll(typeof(ControllerPatch));
+            _harmony.PatchAll(typeof(VotingPatch));
 
             Instance = this;
             Bans = Config.Bind("Lethal Admin", "bans", "", 

@@ -109,14 +109,16 @@ public class UI : MonoBehaviour
         {
             StartOfRound.Instance.shipRoomLights.ToggleShipLights();
         }
-
-        if (StartOfRound.Instance.connectedPlayersAmount + 1 - StartOfRound.Instance.livingPlayers > 1) // Requires at least 1 dead player
+        
+        if (StartOfRound.Instance.connectedPlayersAmount + 1 - StartOfRound.Instance.livingPlayers >= 1 && 
+            !TimeOfDay.Instance.shipLeavingAlertCalled) // Requires at least 1 dead player and that there has not been any early leave call
         {
-            if (GUILayout.Button("Increase departure vote [Experimental]"))
+            if (GUILayout.Button("Override vote (will trigger auto pilot) [Experimental]"))
             {
                 var time = TimeOfDay.Instance;
-                time.votedShipToLeaveEarlyThisRound = false; // Act like we didn't vote yet
-                time.VoteShipToLeaveEarly();
+                time.votesForShipToLeaveEarly = StartOfRound.Instance.connectedPlayersAmount;
+                time.votedShipToLeaveEarlyThisRound = false; // Make sure the game is convinced we didn't vote yet
+                time.VoteShipToLeaveEarly(); // Trigger the vote
             }
         }
 
