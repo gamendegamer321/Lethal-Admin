@@ -7,23 +7,12 @@ namespace LethalAdmin.Patches;
 public class RoundPatch
 {
     [HarmonyPatch("KickPlayer")]
+    [HarmonyPatch("Awake")]
     [HarmonyPostfix]
     public static void OnKick(StartOfRound __instance) // Make sure only banned players are unable to rejoin
     {
         __instance.KickedClientIds.Clear();
 
-        foreach (var player in KickBanTools.GetBannedUsers())
-        {
-            __instance.KickedClientIds.Add(player.SteamID);
-        }
-    }
-    
-    [HarmonyPatch("Awake")]
-    [HarmonyPostfix]
-    public static void OnAwake(StartOfRound __instance) // Set all the bans each time StartOfRound is created
-    {
-        __instance.KickedClientIds.Clear();
-        
         foreach (var player in KickBanTools.GetBannedUsers())
         {
             __instance.KickedClientIds.Add(player.SteamID);

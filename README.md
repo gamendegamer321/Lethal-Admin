@@ -1,11 +1,6 @@
 # Lethal Admin
 An admin tool for lethal company.
 
-## Experimental
-**The ``Increase departure vote`` button is very experimental and might not work as expected or give crashes**
-
-It is only available after at least 1 person has died
-
 ## Manual Installation
 Download the ``LethalAdmin.dll`` and paste the dll into ``path_to_lethal_company/BepInEx/Plugins``
 
@@ -20,4 +15,6 @@ After a reboot you can still unban the player, _but_ only their steamID is store
 To prevent radio spam, you can view who is talking on the radio with the toggle to the right of the kick/ban button.
 
 ## Actions
-You can toggle the lights switch of the ship using a button in the admin pannel.
+You can toggle the lights switch of the ship using a button in the admin panel.
+
+Departure button, when pressed the votes by the spectators will be overriden and the autopilot triggered (this will act as if all spectators have voted)
