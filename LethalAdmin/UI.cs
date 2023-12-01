@@ -21,6 +21,8 @@ public class UI : MonoBehaviour
         GUILayout.MinWidth(300)
     };
 
+    private readonly GUIStyle _yellowText = new();
+
     private Vector2 _scrollPosition;
     private ViewMode _currentViewMode = ViewMode.Users;
     private bool _menuAlwaysOpen;
@@ -28,6 +30,7 @@ public class UI : MonoBehaviour
     private void Awake()
     {
         Instances.Add(this);
+        _yellowText.normal.textColor = Color.yellow;
     }
 
     private void OnDestroy()
@@ -129,13 +132,24 @@ public class UI : MonoBehaviour
 
     private void DrawUsers()
     {
+        GUILayout.Label("Players that are not connected are shown in yellow!");
+        
         var players = KickBanTools.GetPlayers();
         var id = 0;
         
         foreach (var player in players)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label($"({id}) {player}", _labelOptions);
+
+            if (player.Connected)
+            {
+                GUILayout.Label($"({id}) {player}", _labelOptions);
+            }
+            else
+            {
+                GUILayout.Label($"({id}) {player}", _yellowText, _labelOptions);
+            }
+            
 
             if (id != 0) // Owner should not kick/ban themselves
             {
