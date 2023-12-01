@@ -29,11 +29,6 @@ public static class KickBanTools
     {
         BannedUsers.Clear();
         BannedUsers.AddRange(bans);
-
-        foreach (var ban in bans) // Also add all bans to the kicked list
-        {
-            StartOfRound.Instance.KickedClientIds.Add(ban.SteamID);
-        }
     }
 
     public static void BanPlayer(PlayerInfo playerInfo)
@@ -46,13 +41,13 @@ public static class KickBanTools
             return;
         }
         
-        KickPlayer(playerInfo); // Always kick the player we are trying to ban
-        
         if (BannedUsers.Any(bannedPlayer => bannedPlayer.SteamID == playerInfo.SteamID)) // If the player is already banned don't ban them again
         {
             LethalLogger.AddLog(new Log(
                 $"[Ban] Could not ban {playerInfo} as this user is already banned", "Warning"
             ));
+            
+            KickPlayer(playerInfo); // Always kick the player we are trying to ban
             return;
         }
         
@@ -61,6 +56,8 @@ public static class KickBanTools
         LethalLogger.AddLog(new Log(
             $"[Ban] {playerInfo} has been banned"
         ));
+        
+        KickPlayer(playerInfo); // Always kick the player for the ban to take affect
     }
     
     public static void UnbanPlayer(PlayerInfo player)
