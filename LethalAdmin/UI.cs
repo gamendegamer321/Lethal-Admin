@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using LethalAdmin.Logging;
 using UnityEngine;
@@ -26,6 +27,9 @@ public class UI : MonoBehaviour
     private Vector2 _scrollPosition;
     private ViewMode _currentViewMode = ViewMode.Users;
     private bool _menuAlwaysOpen;
+
+    private string _minVotes = Plugin.Instance.MinVotes.ToString();
+    private string _settingsErrorMessage = "";
     
     private void Awake()
     {
@@ -81,8 +85,8 @@ public class UI : MonoBehaviour
             case ViewMode.Bans:
                 DrawBans();
                 break;
-            case ViewMode.Logs:
-                DrawLogs();
+            case ViewMode.Settings:
+                DrawSettings();
                 break;
             default:
                 DrawUsers();
@@ -97,9 +101,9 @@ public class UI : MonoBehaviour
             _currentViewMode = ViewMode.Users;
         }
 
-        if (GUILayout.Button("Logs"))
+        if (GUILayout.Button("Settings & Logs"))
         {
-            _currentViewMode = ViewMode.Logs;
+            _currentViewMode = ViewMode.Settings;
         }
         
         if (GUILayout.Button("Bans"))
@@ -119,7 +123,7 @@ public class UI : MonoBehaviour
             if (GUILayout.Button("Override vote (will trigger auto pilot) [Experimental]"))
             {
                 var time = TimeOfDay.Instance;
-                time.votesForShipToLeaveEarly = StartOfRound.Instance.connectedPlayersAmount;
+                time.votesForShipToLeaveEarly = Math.Max(StartOfRound.Instance.connectedPlayersAmount, Plugin.Instance.MinVotes);
                 time.votedShipToLeaveEarlyThisRound = false; // Make sure the game is convinced we didn't vote yet
                 time.VoteShipToLeaveEarly(); // Trigger the vote
             }
@@ -172,10 +176,43 @@ public class UI : MonoBehaviour
         }
     }
 
-    private void DrawLogs()
+    private void DrawSettings()
     {
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Minimum departure votes: ");
+        _minVotes = GUILayout.TextField(_minVotes);
+        GUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Apply settings"))
+        {
+            try
+            {
+                var newMinVotes = int.Parse(_minVotes);
+
+                if (newMinVotes < 1)
+                {
+                    _minVotes = Plugin.Instance.MinVotes.ToString();
+                    _settingsErrorMessage = "Minimum departure votes can not be negative.";
+                }
+                else
+                {
+                    Plugin.Instance.MinVotes = newMinVotes;
+                    _settingsErrorMessage = "";
+                }
+            }
+            catch (FormatException)
+            {
+                _minVotes = Plugin.Instance.MinVotes.ToString();
+                _settingsErrorMessage = "New minimum departure votes is not a valid integer.";
+            }
+        }
+        
+        GUILayout.Label(_settingsErrorMessage, _yellowText);
+        
         var logs = LethalLogger.GetLogs();
 
+        GUILayout.Label("Logs:");
+        
         foreach (var log in logs)
         {
             GUILayout.Label(log.GetTimeFormattedString());
@@ -202,6 +239,6 @@ public class UI : MonoBehaviour
 
     private enum ViewMode
     {
-        Users, Logs, Bans
+        Users, Settings, Bans
     }
 }
