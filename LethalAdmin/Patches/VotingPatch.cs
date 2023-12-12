@@ -9,8 +9,8 @@ public class VotingPatch
     [HarmonyPrefix]
     public static bool OnServerVote(TimeOfDay __instance)
     {
-        // Ignore this patch if min votes is set to 1 or less (disabled)
-        if (Plugin.Instance.MinVotes <= 1)
+        // Ignore this patch if min votes is set to 1 or less (disabled), or if this is not on the server
+        if (Plugin.Instance.MinVotes <= 1 || !__instance.IsServer)
         {
             return true;
         }

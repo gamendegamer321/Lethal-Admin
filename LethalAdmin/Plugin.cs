@@ -13,6 +13,8 @@ namespace LethalAdmin
         private readonly Harmony _harmony = new("LethalAdmin");
         public static Plugin Instance;
 
+        private const string ConfigSection = "Lethal Admin";
+
         private ConfigEntry<string> _bans;
         private ConfigEntry<int> _minVotesConfig;
 
@@ -35,9 +37,9 @@ namespace LethalAdmin
             _harmony.PatchAll(typeof(VotingPatch));
 
             Instance = this;
-            _bans = Config.Bind("Lethal Admin", "bans", "",
+            _bans = Config.Bind(ConfigSection, "bans", "",
                 "The steam IDs of all banned players, comma seperated.");
-            _minVotesConfig = Config.Bind("Lethal Admin", "minVotes", 1,
+            _minVotesConfig = Config.Bind(ConfigSection, "minVotes", 1,
                 "The minimum amount of votes before the autopilot starts. Use a value of 1 to disable.");
             
             LoadConfigBans();
