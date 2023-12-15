@@ -30,6 +30,7 @@ public class UI : MonoBehaviour
     private bool _menuAlwaysOpen;
 
     private string _minVotes = Plugin.Instance.MinVotes.ToString();
+    private bool _leverLocked = Plugin.Instance.LockLever;
     private string _settingsErrorMessage = "";
 
     private void Awake()
@@ -186,6 +187,8 @@ public class UI : MonoBehaviour
         GUILayout.Label("Minimum departure votes: ");
         _minVotes = GUILayout.TextField(_minVotes);
         GUILayout.EndHorizontal();
+        
+        _leverLocked = GUILayout.Toggle(_leverLocked, "Only owner can start ship");
 
         if (GUILayout.Button("Apply settings"))
         {
@@ -201,6 +204,7 @@ public class UI : MonoBehaviour
                 else
                 {
                     Plugin.Instance.MinVotes = newMinVotes;
+                    Plugin.Instance.LockLever = _leverLocked;
                     _settingsErrorMessage = "";
                 }
             }

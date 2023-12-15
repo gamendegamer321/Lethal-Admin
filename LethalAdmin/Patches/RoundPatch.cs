@@ -32,4 +32,11 @@ public class RoundPatch
             $"[Departure] {script.playerUsername} ({script.playerSteamId}@steam) has started the ship"
         ));
     }
+    
+    [HarmonyPatch("StartGameServerRpc")]
+    [HarmonyPrefix]
+    public static bool NonServerStartGame(StartOfRound __instance) // TODO: Check reliability and it actually prevents the clients?
+    {
+        return !__instance.IsServer || !Plugin.Instance.LockLever;
+    }
 }

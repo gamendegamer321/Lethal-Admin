@@ -10,7 +10,7 @@ namespace LethalAdmin
     [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string PluginVersion = "1.0.6";
+        public const string PluginVersion = "1.0.7";
         
         private readonly Harmony _harmony = new("LethalAdmin");
         public static Plugin Instance;
@@ -19,6 +19,7 @@ namespace LethalAdmin
 
         private ConfigEntry<string> _bans;
         private ConfigEntry<int> _minVotesConfig;
+        private ConfigEntry<bool> _lockLeverConfig;
 
         public int MinVotes
         {
@@ -26,6 +27,16 @@ namespace LethalAdmin
             set
             {
                 _minVotesConfig.Value = value;
+                Config.Save();
+            }
+        }
+        
+        public bool LockLever
+        {
+            get => _lockLeverConfig.Value;
+            set
+            {
+                _lockLeverConfig.Value = value;
                 Config.Save();
             }
         }
@@ -43,6 +54,8 @@ namespace LethalAdmin
                 "The steam IDs of all banned players, comma seperated.");
             _minVotesConfig = Config.Bind(ConfigSection, "minVotes", 1,
                 "The minimum amount of votes before the autopilot starts. Use a value of 1 to disable.");
+            _lockLeverConfig = Config.Bind(ConfigSection, "leverLock", false,
+                "When enabled (true) the ship departure lever can only be used by the host.");
             
             LoadConfigBans();
 
