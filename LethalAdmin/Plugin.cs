@@ -7,9 +7,11 @@ using LethalAdmin.Patches;
 
 namespace LethalAdmin
 {
-    [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", "1.0.5")]
+    [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
+        public const string PluginVersion = "1.0.6";
+        
         private readonly Harmony _harmony = new("LethalAdmin");
         public static Plugin Instance;
 

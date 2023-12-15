@@ -12,7 +12,8 @@ public class UI : MonoBehaviour
 
     private Rect _windowRect;
 
-    private readonly GUILayoutOption[] _options = {
+    private readonly GUILayoutOption[] _options =
+    {
         GUILayout.Width(800),
         GUILayout.Height(400)
     };
@@ -30,7 +31,7 @@ public class UI : MonoBehaviour
 
     private string _minVotes = Plugin.Instance.MinVotes.ToString();
     private string _settingsErrorMessage = "";
-    
+
     private void Awake()
     {
         Instances.Add(this);
@@ -69,7 +70,8 @@ public class UI : MonoBehaviour
         if (!StartOfRound.Instance.IsServer || (!_menuOpen && !_menuAlwaysOpen)) return;
 
         var controlID = GUIUtility.GetControlID(FocusType.Passive);
-        _windowRect = GUILayout.Window(controlID, _windowRect, DrawUI, "Lethal Admin Menu", _options);
+        _windowRect = GUILayout.Window(controlID, _windowRect, DrawUI, "Lethal Admin Menu V" + Plugin.PluginVersion,
+            _options);
     }
 
     private void DrawUI(int windowID)
@@ -105,7 +107,7 @@ public class UI : MonoBehaviour
         {
             _currentViewMode = ViewMode.Settings;
         }
-        
+
         if (GUILayout.Button("Bans"))
         {
             _currentViewMode = ViewMode.Bans;
@@ -116,14 +118,16 @@ public class UI : MonoBehaviour
         {
             StartOfRound.Instance.shipRoomLights.ToggleShipLights();
         }
-        
-        if (StartOfRound.Instance.connectedPlayersAmount + 1 - StartOfRound.Instance.livingPlayers >= 1 && 
-            !TimeOfDay.Instance.shipLeavingAlertCalled) // Requires at least 1 dead player and that there has not been any early leave call
+
+        if (StartOfRound.Instance.connectedPlayersAmount + 1 - StartOfRound.Instance.livingPlayers >= 1 &&
+            !TimeOfDay.Instance
+                .shipLeavingAlertCalled) // Requires at least 1 dead player and that there has not been any early leave call
         {
             if (GUILayout.Button("Override vote (will trigger auto pilot) [Experimental]"))
             {
                 var time = TimeOfDay.Instance;
-                time.votesForShipToLeaveEarly = Math.Max(StartOfRound.Instance.connectedPlayersAmount, Plugin.Instance.MinVotes);
+                time.votesForShipToLeaveEarly =
+                    Math.Max(StartOfRound.Instance.connectedPlayersAmount, Plugin.Instance.MinVotes);
                 time.votedShipToLeaveEarlyThisRound = false; // Make sure the game is convinced we didn't vote yet
                 time.VoteShipToLeaveEarly(); // Trigger the vote
             }
@@ -137,10 +141,10 @@ public class UI : MonoBehaviour
     private void DrawUsers()
     {
         GUILayout.Label("Players that are not connected are shown in yellow!");
-        
+
         var players = KickBanTools.GetPlayers();
         var id = 0;
-        
+
         foreach (var player in players)
         {
             GUILayout.BeginHorizontal();
@@ -153,7 +157,7 @@ public class UI : MonoBehaviour
             {
                 GUILayout.Label($"({id}) {player}", _yellowText, _labelOptions);
             }
-            
+
 
             if (id != 0) // Owner should not kick/ban themselves
             {
@@ -169,7 +173,7 @@ public class UI : MonoBehaviour
             }
 
             GUILayout.Toggle(player.UsingWalkie, "Using walkie");
-            
+
             GUILayout.EndHorizontal();
 
             id++;
@@ -206,13 +210,13 @@ public class UI : MonoBehaviour
                 _settingsErrorMessage = "New minimum departure votes is not a valid integer.";
             }
         }
-        
+
         GUILayout.Label(_settingsErrorMessage, _yellowText);
-        
+
         var logs = LethalLogger.GetLogs();
 
         GUILayout.Label("Logs:");
-        
+
         foreach (var log in logs)
         {
             GUILayout.Label(log.GetTimeFormattedString());
@@ -227,18 +231,20 @@ public class UI : MonoBehaviour
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(player.ToString(), _labelOptions);
-            
+
             if (GUILayout.Button($"Unban"))
             {
                 KickBanTools.UnbanPlayer(player);
             }
-            
+
             GUILayout.EndHorizontal();
         }
     }
 
     private enum ViewMode
     {
-        Users, Settings, Bans
+        Users,
+        Settings,
+        Bans
     }
 }
