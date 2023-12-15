@@ -71,8 +71,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
-/.idea
-/.git
-/LethalAdmin/bin
-/LethalAdmin/obj
-/external_dlls
+/.idea/
+/LethalAdmin/bin/
+/LethalAdmin/obj/
+/external_dlls/
+/build.bat
