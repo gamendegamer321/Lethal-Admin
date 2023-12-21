@@ -1,5 +1,6 @@
 using HarmonyLib;
 using LethalAdmin.Logging;
+using UnityEngine;
 
 namespace LethalAdmin.Patches;
 
@@ -18,15 +19,15 @@ public class RoundPatch
             __instance.KickedClientIds.Add(player.SteamID);
         }
     }
-    
+
     [HarmonyPatch("EndGameClientRpc")]
     [HarmonyPostfix]
     public static void OnShipLeave(StartOfRound __instance, object[] __args)
     {
-        var playerID = (int) __args[0];
+        var playerID = (int)__args[0];
 
-        if (playerID >= __instance.allPlayerScripts.Length) return; 
-        
+        if (playerID >= __instance.allPlayerScripts.Length) return;
+
         var script = __instance.allPlayerScripts[playerID];
         LethalLogger.AddLog(new Log(
             $"[Departure] {script.playerUsername} ({script.playerSteamId}@steam) has started the ship"
@@ -35,8 +36,17 @@ public class RoundPatch
     
     [HarmonyPatch("StartGameServerRpc")]
     [HarmonyPrefix]
-    public static bool NonServerStartGame(StartOfRound __instance) // TODO: Check reliability and it actually prevents the clients?
+    public static bool NonServerStartGame(StartOfRound __instance)
     {
-        return !__instance.IsServer || !Plugin.Instance.LockLever;
+        // We want the default method to run if we are not the server, or the feature is disabled
+        if (!Plugin.Instance.LockLever || !__instance.IsServer) return true;
+        
+        Plugin.Instance.LogInfo($"Blocked bypass attempt on {(__instance.IsServer ? "Server" : "Client")}");
+        
+        var lever = Object.FindObjectOfType<StartMatchLever>();
+        lever.CancelStartGameClientRpc();
+        lever.triggerScript.interactable = true; // Make it still usable on the server (but not the clients)
+        
+        return false;
     }
 }
