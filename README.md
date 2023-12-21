@@ -19,6 +19,12 @@ Ever had that 1 person that dies in the first minute and then activates the auto
 Well no longer, you can now add a minimum to the amount of votes that are required before the autopilot will trigger.
 To disable the feature set the minimum to 1, as that is the default of the game.
 
+## Host only ship lever
+WIth the host only ship lever it is possible to prevent people who are not the host from using the ship lever, 
+this *only works in orbit* to ensure people can still leave a planet.
+This can be enabled or disabled using the "leverLock" config option, or in the admin menu.
+Disabling this config option will only take affect the next time you go into orbit.
+
 ## Actions
 You can toggle the lights switch of the ship using a button in the admin panel.
 
