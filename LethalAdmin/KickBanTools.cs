@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LethalAdmin.Logging;
+using Steamworks;
 
 namespace LethalAdmin;
 
@@ -85,6 +86,24 @@ public static class KickBanTools
             LethalLogger.AddLog(new Log(
                 $"[Kick] {controller.playerUsername} ({controller.playerSteamId}@steam) has been kicked (id={id})"
             ));
+        }
+    }
+
+    public static void ShowProfile(PlayerInfo playerInfo)
+    {
+        var playerControllers = StartOfRound.Instance.allPlayerScripts;
+
+        for (int i = 0; i < playerControllers.Length; i++)
+        {
+            var controller = playerControllers[i];
+            if (controller.playerUsername != playerInfo.Username
+                || controller.playerSteamId != playerInfo.SteamID) continue; // Both username and steamID need to match
+
+            SteamFriends.OpenUserOverlay(controller.playerSteamId, "steamid");
+            var newLog = new Log(
+               $"[ProfileCheckTest] {controller.playerUsername} ({controller.playerSteamId}) TestingID (id={i})"
+           );
+            LethalLogger.AddLog(newLog);
         }
     }
 
