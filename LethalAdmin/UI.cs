@@ -171,6 +171,15 @@ public class UI : MonoBehaviour
                 {
                     KickBanTools.BanPlayer(player);
                 }
+
+                
+
+            }
+
+            if (GUILayout.Button("Profile"))
+            {
+                KickBanTools.ShowProfile(player);
+
             }
 
             GUILayout.Toggle(player.UsingWalkie, "Using walkie");
@@ -187,7 +196,7 @@ public class UI : MonoBehaviour
         GUILayout.Label("Minimum departure votes: ");
         _minVotes = GUILayout.TextField(_minVotes);
         GUILayout.EndHorizontal();
-        
+
         _leverLocked = GUILayout.Toggle(_leverLocked, "Only owner can start ship");
 
         if (GUILayout.Button("Apply settings"))
