@@ -20,10 +20,10 @@ public static class KickBanTools
 
         return playerControllers.Select((player, i) => new PlayerInfo
         {
-            Username = player.playerUsername, 
+            Username = player.playerUsername,
             SteamID = player.playerSteamId,
             UsingWalkie = player.speakingToWalkieTalkie,
-            Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong) i)
+            Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i)
         }).ToList();
     }
 
@@ -91,20 +91,13 @@ public static class KickBanTools
 
     public static void ShowProfile(PlayerInfo playerInfo)
     {
-        var playerControllers = StartOfRound.Instance.allPlayerScripts;
 
-        for (int i = 0; i < playerControllers.Length; i++)
-        {
-            var controller = playerControllers[i];
-            if (controller.playerUsername != playerInfo.Username
-                || controller.playerSteamId != playerInfo.SteamID) continue; // Both username and steamID need to match
+        SteamFriends.OpenUserOverlay(playerInfo.SteamID, "steamid");
+        var newLog = new Log(
+           $"[ProfileCheckTest] {playerInfo.Username} ({playerInfo.SteamID}))"
+       );
+        LethalLogger.AddLog(newLog);
 
-            SteamFriends.OpenUserOverlay(controller.playerSteamId, "steamid");
-            var newLog = new Log(
-               $"[ProfileCheckTest] {controller.playerUsername} ({controller.playerSteamId}) TestingID (id={i})"
-           );
-            LethalLogger.AddLog(newLog);
-        }
     }
 
     public class PlayerInfo
