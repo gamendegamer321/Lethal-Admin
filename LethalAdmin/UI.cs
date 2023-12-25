@@ -245,6 +245,11 @@ public class UI : MonoBehaviour
             GUILayout.BeginHorizontal();
             GUILayout.Label(player.ToString(), _labelOptions);
 
+            if (GUILayout.Button($"Profile"))
+            {
+                KickBanTools.ShowProfile(player);
+            }
+
             if (GUILayout.Button($"Unban"))
             {
                 KickBanTools.UnbanPlayer(player);
