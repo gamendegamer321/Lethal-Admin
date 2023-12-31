@@ -23,7 +23,8 @@ public static class KickBanTools
             Username = player.playerUsername,
             SteamID = player.playerSteamId,
             UsingWalkie = player.speakingToWalkieTalkie,
-            Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i)
+            Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i),
+            isWalkieOn = player.holdingWalkieTalkie,
         }).ToList();
     }
 
@@ -106,7 +107,7 @@ public static class KickBanTools
         public ulong SteamID;
         public bool UsingWalkie;
         public bool Connected;
-
+        public bool isWalkieOn;
         public override string ToString()
         {
             return $"{Username} ({SteamID}@steam)";

@@ -171,18 +171,14 @@ public class UI : MonoBehaviour
                 {
                     KickBanTools.BanPlayer(player);
                 }
-
-                
-
-            }
-
             if (GUILayout.Button("Profile"))
             {
                 KickBanTools.ShowProfile(player);
-
+                }
             }
 
             GUILayout.Toggle(player.UsingWalkie, "Using walkie");
+            GUILayout.Toggle(player.isWalkieOn, "Walkie On");
 
             GUILayout.EndHorizontal();
 
