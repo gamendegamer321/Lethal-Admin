@@ -14,7 +14,7 @@ public class UI : MonoBehaviour
 
     private readonly GUILayoutOption[] _options =
     {
-        GUILayout.Width(800),
+        GUILayout.Width(900),
         GUILayout.Height(400)
     };
 
@@ -124,7 +124,7 @@ public class UI : MonoBehaviour
             !TimeOfDay.Instance
                 .shipLeavingAlertCalled) // Requires at least 1 dead player and that there has not been any early leave call
         {
-            if (GUILayout.Button("Override vote (will trigger auto pilot) [Experimental]"))
+            if (GUILayout.Button("Override vote (will trigger auto pilot)"))
             {
                 var time = TimeOfDay.Instance;
                 time.votesForShipToLeaveEarly =
@@ -141,7 +141,7 @@ public class UI : MonoBehaviour
 
     private void DrawUsers()
     {
-        GUILayout.Label("Players that are not connected are shown in yellow!");
+        GUILayout.Label("Players that are not connected are shown in yellow.");
 
         var players = KickBanTools.GetPlayers();
         var id = 0;
@@ -171,14 +171,15 @@ public class UI : MonoBehaviour
                 {
                     KickBanTools.BanPlayer(player);
                 }
-            if (GUILayout.Button("Profile"))
-            {
-                KickBanTools.ShowProfile(player);
+
+                if (GUILayout.Button("Profile"))
+                {
+                    KickBanTools.ShowProfile(player);
                 }
             }
 
-            GUILayout.Toggle(player.UsingWalkie, "Using walkie");
-            GUILayout.Toggle(player.isWalkieOn, "Walkie On");
+            GUILayout.Toggle(player.UsingWalkie, "Talking through walkie");
+            GUILayout.Toggle(player.isWalkieOn, "Walkie on");
 
             GUILayout.EndHorizontal();
 
