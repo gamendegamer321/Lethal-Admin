@@ -23,7 +23,18 @@ public class UI : MonoBehaviour
         GUILayout.MinWidth(300)
     };
 
-    private readonly GUIStyle _yellowText = new();
+    /***
+     * Set up base style initializers to be used in the code later
+     * moved from readonly to rw to utilize the GUI class
+     */
+    private GUIStyle _redText = new();
+    private GUIStyle _whiteText = new();
+    private GUIStyle _yellowText = new();
+    private bool _ran = false;
+
+    // Instantiate toolbar settings, this can be done later though.
+    private int toolbarInt = 0;
+    private readonly string[] toolbarStrings = ["Users", "Settings & Logs", "Bans"];
 
     private Vector2 _scrollPosition;
     private ViewMode _currentViewMode = ViewMode.Users;
@@ -36,7 +47,7 @@ public class UI : MonoBehaviour
     private void Awake()
     {
         Instances.Add(this);
-        _yellowText.normal.textColor = Color.yellow;
+
     }
 
     private void OnDestroy()
@@ -66,8 +77,57 @@ public class UI : MonoBehaviour
         _menuOpen = value;
     }
 
+
+    /** 
+     *
+     * Move style assignment to PrepareGui when we have access to the GUI class
+     * 
+     * Also makes it easier to style things globally.
+     * It also has sane bases with proper padding
+     *
+     */
+    private void PrepareGui()
+    {
+        // Instantiate global skin style, modify it and reassign _yellowText with the label skin style + modifications
+        GUIStyle yellow = new(GUI.skin.label)
+        {
+            normal = { textColor = Color.yellow },
+        };
+
+        _yellowText = yellow;
+        
+        GUIStyle red = new(GUI.skin.label)
+        {
+            normal = { textColor = Color.red },
+        };
+
+        _redText = red;
+        
+        GUIStyle white = new(GUI.skin.label)
+        {
+            normal = { textColor = Color.white },
+        };
+
+        _whiteText = white;
+
+
+        // Instantiate global toggle style, change it, assign it to global toggle style.
+        GUIStyle toggle = new(GUI.skin.toggle)
+        {
+            stretchWidth = false,
+        };
+
+        GUI.skin.toggle = toggle;
+
+    }
     private void OnGUI()
     {
+        // run once
+        if(!_ran) {
+            _ran = true;
+            PrepareGui();
+        }
+
         if (!StartOfRound.Instance.IsServer || (!_menuOpen && !_menuAlwaysOpen)) return;
 
         var controlID = GUIUtility.GetControlID(FocusType.Passive);
@@ -78,7 +138,7 @@ public class UI : MonoBehaviour
     private void DrawUI(int windowID)
     {
         GUILayout.BeginVertical();
-        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, true);
+        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, false);
 
         switch (_currentViewMode)
         {
@@ -99,22 +159,27 @@ public class UI : MonoBehaviour
         GUILayout.EndScrollView();
         GUILayout.BeginHorizontal();
 
-        if (GUILayout.Button("Users"))
-        {
-            _currentViewMode = ViewMode.Users;
-        }
+        // GUILayout.FlexibleSpace(); // Possible flexbox space
+        toolbarInt = GUILayout.Toolbar(toolbarInt, toolbarStrings);
+        // GUILayout.FlexibleSpace(); // Same as above
 
-        if (GUILayout.Button("Settings & Logs"))
+        // Toolbar just works with the selected Int, switch for it is easy
+        switch (toolbarInt)
         {
-            _currentViewMode = ViewMode.Settings;
-        }
-
-        if (GUILayout.Button("Bans"))
-        {
-            _currentViewMode = ViewMode.Bans;
+            case 0:
+                _currentViewMode = ViewMode.Users;
+                break;
+            case 1:
+                _currentViewMode = ViewMode.Settings;
+                break;
+            case 2:
+                _currentViewMode = ViewMode.Bans;
+                break;
         }
 
         GUILayout.EndHorizontal();
+
+        // Should add a Lock Ship light switch somewhere
         if (GUILayout.Button("Toggle ship lights"))
         {
             StartOfRound.Instance.shipRoomLights.ToggleShipLights();
@@ -141,7 +206,8 @@ public class UI : MonoBehaviour
 
     private void DrawUsers()
     {
-        GUILayout.Label("Players that are not connected are shown in yellow!");
+        GUILayout.Label("NotConnected", _yellowText, _labelOptions);
+        GUILayout.Label("IsDead", _redText, _labelOptions);
 
         var players = KickBanTools.GetPlayers();
         var id = 0;
@@ -150,36 +216,34 @@ public class UI : MonoBehaviour
         {
             GUILayout.BeginHorizontal();
 
-            if (player.Connected)
+            if (player.Connected || player.SteamID != 0)
             {
-                GUILayout.Label($"({id}) {player}", _labelOptions);
+                GUILayout.Label($"({id}) {player}", player.isPlayerDead ? _redText : _whiteText, _labelOptions);
+                if (id != 0) // Owner should not kick/ban themselves
+                {
+                    if (GUILayout.Button("Kick"))
+                    {
+                        KickBanTools.KickPlayer(player);
+                    }
+
+                    if (GUILayout.Button("Ban"))
+                    {
+                        KickBanTools.BanPlayer(player);
+                    }
+                    if (GUILayout.Button("Profile"))
+                    {
+                        KickBanTools.ShowProfile(player);
+
+                    }
+                }
+                GUILayout.Toggle(player.isWalkieOn, "WalkieOn");
+                GUILayout.Toggle(player.UsingWalkie, "Speaking");
+                GUILayout.Toggle(player.isSpeedCheating, "Cheating");
             }
             else
             {
                 GUILayout.Label($"({id}) {player}", _yellowText, _labelOptions);
             }
-
-
-            if (id != 0) // Owner should not kick/ban themselves
-            {
-                if (GUILayout.Button("Kick"))
-                {
-                    KickBanTools.KickPlayer(player);
-                }
-
-                if (GUILayout.Button("Ban"))
-                {
-                    KickBanTools.BanPlayer(player);
-                }
-            if (GUILayout.Button("Profile"))
-            {
-                KickBanTools.ShowProfile(player);
-                }
-            }
-
-            GUILayout.Toggle(player.UsingWalkie, "Using walkie");
-            GUILayout.Toggle(player.isWalkieOn, "Walkie On");
-
             GUILayout.EndHorizontal();
 
             id++;
