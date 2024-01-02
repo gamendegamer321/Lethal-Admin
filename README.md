@@ -11,8 +11,11 @@ You can unban a player in the Bans tab by clicking the unban button for that pla
 Your bans will be saved to the config, meaning that after a reboot of the game, the players you have banned will remain banned.
 After a reboot you can still unban the player, _but_ only their steamID is stored, meaning their username will now be displayed as "UNKNOWN".
 
+You can also open someones steam profile from within the admin window by clicking the "Profile" button.
+This even works with mods that allow for bigger lobbies, which might break the default profile button.
+
 ## Radio
-To prevent radio spam, you can view who is talking on the radio with the toggle to the right of the kick/ban button.
+To prevent radio spam, you can view who is talking on the radio with the toggle to the right of the kick/ban button ("Talking through walkie") and you can view who has their radio enabled with the toggle "Walkie on".
 
 ## Minimum votes
 Ever had that 1 person that dies in the first minute and then activates the autopilot?

@@ -10,7 +10,7 @@ namespace LethalAdmin
     [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string PluginVersion = "1.1.0";
+        public const string PluginVersion = "1.2.0";
         
         private readonly Harmony _harmony = new("LethalAdmin");
         public static Plugin Instance;
