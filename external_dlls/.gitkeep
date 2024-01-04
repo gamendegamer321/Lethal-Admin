@@ -1,3 +1,3 @@
-﻿This is where you place the Assembly-CSharp.dll and Unity.Netcode.Runtime.dll
+﻿# This is where you place the Assembly-CSharp.dll, Facepunch.Steamworks.Win64.dll and Unity.Netcode.Runtime.dll
 
 ## WARNING! Make sure the dll files in this folder are not uploaded!

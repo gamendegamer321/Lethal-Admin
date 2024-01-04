@@ -25,6 +25,8 @@ public static class KickBanTools
             UsingWalkie = player.speakingToWalkieTalkie,
             Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i),
             isWalkieOn = player.holdingWalkieTalkie,
+            isSpeedCheating = player.isSpeedCheating,
+            isPlayerDead = player.isPlayerDead
         }).ToList();
     }
 
@@ -108,6 +110,8 @@ public static class KickBanTools
         public bool UsingWalkie;
         public bool Connected;
         public bool isWalkieOn;
+        public bool isSpeedCheating;
+        public bool isPlayerDead;
         public override string ToString()
         {
             return $"{Username} ({SteamID}@steam)";
