@@ -27,17 +27,16 @@ public class UI : MonoBehaviour
      * Set up base style initializers to be used in the code later
      * moved from readonly to rw to utilize the GUI class
      */
-    private GUIStyle _redText = new();
-    private GUIStyle _whiteText = new();
-    private GUIStyle _yellowText = new();
-    private bool _ran = false;
+    private static GUIStyle _redText = new();
+    private static GUIStyle _whiteText = new();
+    private static GUIStyle _yellowText = new();
+    private static bool _guiPrepared;
 
     // Instantiate toolbar settings, this can be done later though.
-    private int toolbarInt = 0;
-    private readonly string[] toolbarStrings = ["Users", "Settings & Logs", "Bans"];
+    private int _toolbarInt;
+    private readonly string[] _toolbarStrings = { "Users", "Settings & Logs", "Bans" };
 
     private Vector2 _scrollPosition;
-    private ViewMode _currentViewMode = ViewMode.Users;
     private bool _menuAlwaysOpen;
 
     private string _minVotes = Plugin.Instance.MinVotes.ToString();
@@ -47,7 +46,6 @@ public class UI : MonoBehaviour
     private void Awake()
     {
         Instances.Add(this);
-
     }
 
     private void OnDestroy()
@@ -77,54 +75,41 @@ public class UI : MonoBehaviour
         _menuOpen = value;
     }
 
-
-    /** 
-     *
+    /**
      * Move style assignment to PrepareGui when we have access to the GUI class
-     * 
+     *
      * Also makes it easier to style things globally.
      * It also has sane bases with proper padding
-     *
      */
-    private void PrepareGui()
+    private static void PrepareGui()
     {
-        // Instantiate global skin style, modify it and reassign _yellowText with the label skin style + modifications
-        GUIStyle yellow = new(GUI.skin.label)
+        _yellowText = new GUIStyle(GUI.skin.label)
         {
             normal = { textColor = Color.yellow },
         };
 
-        _yellowText = yellow;
-        
-        GUIStyle red = new(GUI.skin.label)
+        _redText = new GUIStyle(GUI.skin.label)
         {
             normal = { textColor = Color.red },
         };
 
-        _redText = red;
-        
-        GUIStyle white = new(GUI.skin.label)
+        _whiteText = new GUIStyle(GUI.skin.label)
         {
             normal = { textColor = Color.white },
         };
 
-        _whiteText = white;
-
-
-        // Instantiate global toggle style, change it, assign it to global toggle style.
-        GUIStyle toggle = new(GUI.skin.toggle)
+        GUI.skin.toggle = new GUIStyle(GUI.skin.toggle)
         {
             stretchWidth = false,
         };
-
-        GUI.skin.toggle = toggle;
-
     }
+
     private void OnGUI()
     {
         // run once
-        if(!_ran) {
-            _ran = true;
+        if (!_guiPrepared)
+        {
+            _guiPrepared = true;
             PrepareGui();
         }
 
@@ -140,16 +125,16 @@ public class UI : MonoBehaviour
         GUILayout.BeginVertical();
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, false);
 
-        switch (_currentViewMode)
+        switch (_toolbarInt)
         {
-            case ViewMode.Users:
+            case 0:
                 DrawUsers();
                 break;
-            case ViewMode.Bans:
-                DrawBans();
-                break;
-            case ViewMode.Settings:
+            case 1:
                 DrawSettings();
+                break;
+            case 2:
+                DrawBans();
                 break;
             default:
                 DrawUsers();
@@ -157,27 +142,10 @@ public class UI : MonoBehaviour
         }
 
         GUILayout.EndScrollView();
-        GUILayout.BeginHorizontal();
 
         // GUILayout.FlexibleSpace(); // Possible flexbox space
-        toolbarInt = GUILayout.Toolbar(toolbarInt, toolbarStrings);
+        _toolbarInt = GUILayout.Toolbar(_toolbarInt, _toolbarStrings);
         // GUILayout.FlexibleSpace(); // Same as above
-
-        // Toolbar just works with the selected Int, switch for it is easy
-        switch (toolbarInt)
-        {
-            case 0:
-                _currentViewMode = ViewMode.Users;
-                break;
-            case 1:
-                _currentViewMode = ViewMode.Settings;
-                break;
-            case 2:
-                _currentViewMode = ViewMode.Bans;
-                break;
-        }
-
-        GUILayout.EndHorizontal();
 
         // Should add a Lock Ship light switch somewhere
         if (GUILayout.Button("Toggle ship lights"))
@@ -230,12 +198,13 @@ public class UI : MonoBehaviour
                     {
                         KickBanTools.BanPlayer(player);
                     }
+
                     if (GUILayout.Button("Profile"))
                     {
                         KickBanTools.ShowProfile(player);
-
                     }
                 }
+
                 GUILayout.Toggle(player.isWalkieOn, "WalkieOn");
                 GUILayout.Toggle(player.UsingWalkie, "Speaking");
                 GUILayout.Toggle(player.isSpeedCheating, "Cheating");
@@ -244,6 +213,7 @@ public class UI : MonoBehaviour
             {
                 GUILayout.Label($"({id}) {player}", _yellowText, _labelOptions);
             }
+
             GUILayout.EndHorizontal();
 
             id++;
@@ -317,12 +287,5 @@ public class UI : MonoBehaviour
 
             GUILayout.EndHorizontal();
         }
-    }
-
-    private enum ViewMode
-    {
-        Users,
-        Settings,
-        Bans
     }
 }
