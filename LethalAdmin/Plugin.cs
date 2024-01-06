@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.IO;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
+using LethalAdmin.Bans;
 using LethalAdmin.Patches;
 
 namespace LethalAdmin
@@ -12,9 +12,10 @@ namespace LethalAdmin
     {
         public const string PluginVersion = "1.2.0";
         
-        private readonly Harmony _harmony = new("LethalAdmin");
         public static Plugin Instance;
-
+        public static string ConfigFolder;
+        
+        private readonly Harmony _harmony = new("LethalAdmin");
         private const string ConfigSection = "Lethal Admin";
 
         private ConfigEntry<string> _bans;
@@ -51,59 +52,25 @@ namespace LethalAdmin
 
             Instance = this;
             _bans = Config.Bind(ConfigSection, "bans", "",
-                "The steam IDs of all banned players, comma seperated.");
+                "The steam IDs of all banned players, comma seperated. [deprecated]");
             _minVotesConfig = Config.Bind(ConfigSection, "minVotes", 1,
                 "The minimum amount of votes before the autopilot starts. Use a value of 1 to disable.");
             _lockLeverConfig = Config.Bind(ConfigSection, "leverLock", false,
                 "When enabled (true) the ship departure lever can only be used by the host.");
+
+            ConfigFolder = Path.GetDirectoryName(Config.ConfigFilePath);
             
-            LoadConfigBans();
+            BanHandler.LoadBans();
+
+            if (_bans.Value != "Deprecated!")
+            {
+                var bansList = _bans.Value.Split(",");
+                BanHandler.LoadDeprecated(bansList);
+                _bans.Value = "Deprecated!";
+                Config.Save();
+            }
 
             Logger.LogInfo("Finished starting Lethal Admin");
-        }
-
-        private void LoadConfigBans()
-        {
-            var bansList = _bans.Value.Split(",");
-            var bannedPlayers = new List<KickBanTools.PlayerInfo>();
-
-            foreach (var id in bansList)
-            {
-                if (!ulong.TryParse(id, out var idValue)) continue;
-                bannedPlayers.Add(new KickBanTools.PlayerInfo { SteamID = idValue, Username = "UNKNOWN" });
-            }
-
-            KickBanTools.SetBannedPLayers(bannedPlayers);
-        }
-
-        internal void AddConfigBan(ulong value)
-        {
-            if (_bans.Value.Length != 0) _bans.Value += ",";
-            _bans.Value += value;
-
-            Config.Save();
-        }
-
-        internal void RemoveConfigBan(ulong value)
-        {
-            var bansList = _bans.Value.Split(",");
-            var newBansList = new StringBuilder();
-
-            foreach (var ban in bansList)
-            {
-                if (!ulong.TryParse(ban, out var id)) continue;
-                if (id == value) continue;
-                if (newBansList.Length != 0) newBansList.Append(",");
-                newBansList.Append(id);
-            }
-
-            _bans.Value = newBansList.ToString();
-            Config.Save();
-        }
-
-        internal void LogInfo(string message)
-        {
-            Logger.LogInfo(message);
         }
     }
 }

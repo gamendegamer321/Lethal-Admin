@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using LethalAdmin.Bans;
 using LethalAdmin.Logging;
 using Steamworks;
 
@@ -7,11 +8,15 @@ namespace LethalAdmin;
 
 public static class KickBanTools
 {
-    private static readonly List<PlayerInfo> BannedUsers = new();
-
-    public static PlayerInfo[] GetBannedUsers()
+    public static void UpdateKickedIDs()
     {
-        return BannedUsers.ToArray();
+        if (StartOfRound.Instance == null) return;
+
+        StartOfRound.Instance.KickedClientIds.Clear();
+        foreach (var ban in BanHandler.Bans.Values)
+        {
+            StartOfRound.Instance.KickedClientIds.Add(ban.SteamID);
+        }
     }
 
     public static List<PlayerInfo> GetPlayers()
@@ -24,19 +29,13 @@ public static class KickBanTools
             SteamID = player.playerSteamId,
             UsingWalkie = player.speakingToWalkieTalkie,
             Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i),
-            isWalkieOn = player.holdingWalkieTalkie,
-            isSpeedCheating = player.isSpeedCheating,
-            isPlayerDead = player.isPlayerDead
+            IsWalkieOn = player.holdingWalkieTalkie,
+            IsSpeedCheating = player.isSpeedCheating,
+            IsPlayerDead = player.isPlayerDead
         }).ToList();
     }
 
-    internal static void SetBannedPLayers(List<PlayerInfo> bans)
-    {
-        BannedUsers.Clear();
-        BannedUsers.AddRange(bans);
-    }
-
-    public static void BanPlayer(PlayerInfo playerInfo)
+    public static void BanPlayer(PlayerInfo playerInfo, string reason = null)
     {
         if (playerInfo.SteamID == 0) // Steam ID as 0 means there is no player or steam is not used
         {
@@ -47,31 +46,38 @@ public static class KickBanTools
             return;
         }
 
-        if (BannedUsers.Any(bannedPlayer =>
-                bannedPlayer.SteamID == playerInfo.SteamID)) // If the player is already banned don't ban them again
+        if (BanHandler.AddBan(playerInfo.SteamID, playerInfo.Username, reason))
+        {
+            LethalLogger.AddLog(new Log(
+                $"[Ban] {playerInfo} has been banned"
+            ));
+        }
+        else
         {
             LethalLogger.AddLog(new Log(
                 $"[Ban] Could not ban {playerInfo} as this user is already banned", "Warning"
             ));
-
-            KickPlayer(playerInfo); // Always kick the player we are trying to ban
-            return;
         }
 
-        Plugin.Instance.AddConfigBan(playerInfo.SteamID);
-        BannedUsers.Add(playerInfo); // Add the player to the ban list and then kick them
-        LethalLogger.AddLog(new Log(
-            $"[Ban] {playerInfo} has been banned"
-        ));
-
-        KickPlayer(playerInfo); // Always kick the player for the ban to take affect
+        KickPlayer(playerInfo);
     }
 
-    public static void UnbanPlayer(PlayerInfo player)
+    public static void UnbanPlayer(ulong steamID)
     {
-        StartOfRound.Instance.KickedClientIds.Remove(player.SteamID); // Make sure it's not in the banned list anymore
-        BannedUsers.Remove(player);
-        Plugin.Instance.RemoveConfigBan(player.SteamID);
+        if (BanHandler.RemoveBan(steamID))
+        {
+            LethalLogger.AddLog(new Log(
+                $"[Ban] Could not unban {steamID}@steam as this user is not banned", "Warning"
+            ));
+        }
+        else
+        {
+            LethalLogger.AddLog(new Log(
+                $"[Ban] {steamID}@steam has been unbanned"
+            ));
+        }
+
+        StartOfRound.Instance.KickedClientIds.Remove(steamID); // Make sure it's not in the banned list anymore
     }
 
     public static void KickPlayer(PlayerInfo playerInfo)
@@ -85,22 +91,14 @@ public static class KickBanTools
                 || controller.playerSteamId != playerInfo.SteamID) continue; // Both username and steamID need to match
 
             StartOfRound.Instance.KickPlayer(id);
-
-            LethalLogger.AddLog(new Log(
-                $"[Kick] {controller.playerUsername} ({controller.playerSteamId}@steam) has been kicked (id={id})"
-            ));
+            LethalLogger.AddLog(new Log($"[Kick] {playerInfo} has been kicked (id={id})"));
         }
     }
 
-    public static void ShowProfile(PlayerInfo playerInfo)
+    public static void ShowProfile(string username, ulong steamId)
     {
-
-        SteamFriends.OpenUserOverlay(playerInfo.SteamID, "steamid");
-        var newLog = new Log(
-           $"[ProfileCheckTest] {playerInfo.Username} ({playerInfo.SteamID}))"
-       );
-        LethalLogger.AddLog(newLog);
-
+        SteamFriends.OpenUserOverlay(steamId, "steamid");
+        LethalLogger.AddLog(new Log($"[ProfileCheck] {username} ({steamId}@steam))"));
     }
 
     public class PlayerInfo
@@ -109,9 +107,10 @@ public static class KickBanTools
         public ulong SteamID;
         public bool UsingWalkie;
         public bool Connected;
-        public bool isWalkieOn;
-        public bool isSpeedCheating;
-        public bool isPlayerDead;
+        public bool IsWalkieOn;
+        public bool IsSpeedCheating;
+        public bool IsPlayerDead;
+
         public override string ToString()
         {
             return $"{Username} ({SteamID}@steam)";

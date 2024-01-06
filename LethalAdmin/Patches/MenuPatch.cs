@@ -1,4 +1,5 @@
 using HarmonyLib;
+using LethalAdmin.UI;
 
 namespace LethalAdmin.Patches;
 
@@ -9,13 +10,13 @@ public class MenuPatch
     [HarmonyPostfix]
     public static void OnOpenMenu()
     {
-        UI.SetMenuForAll(true);
+        LethalAdminUI.SetMenuForAll(true);
     }
     
     [HarmonyPatch("CloseQuickMenu")]
     [HarmonyPostfix]
     public static void OnCloseMenu()
     {
-        UI.SetMenuForAll(false);
+        LethalAdminUI.SetMenuForAll(false);
     }
 }
