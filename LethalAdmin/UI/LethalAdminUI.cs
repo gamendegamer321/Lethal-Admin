@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using LethalAdmin.Bans;
-using LethalAdmin.Logging;
 using UnityEngine;
 
 namespace LethalAdmin.UI;
@@ -18,17 +16,22 @@ public class LethalAdminUI : MonoBehaviour
         GUILayout.Width(900),
         GUILayout.Height(400)
     };
-    
+
     public static readonly GUILayoutOption[] LabelOptions =
     {
         GUILayout.MinWidth(300)
     };
-    
-    public static GUIStyle RedText { get; private set; } = new();
-    public static GUIStyle WhiteText { get; private set; } = new();
-    public static GUIStyle YellowText { get; private set; } = new();
+
+    public static readonly GUILayoutOption[] WideLabelOptions =
+    {
+        GUILayout.Width(500)
+    };
+
+    public static GUIStyle RedText { get; private set; }
+    public static GUIStyle WhiteText { get; private set; }
+    public static GUIStyle YellowText { get; private set; }
     private static bool _guiPrepared;
-    
+
     private int _toolbarInt;
     private readonly string[] _toolbarStrings = { "Users", "Settings & Logs", "Bans" };
 
@@ -84,8 +87,9 @@ public class LethalAdminUI : MonoBehaviour
     private void DrawUI(int windowID)
     {
         GUILayout.BeginVertical();
-        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, false, false);
-
+        
+        _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUI.skin.box);
+        
         switch (_toolbarInt)
         {
             case 0:
@@ -102,11 +106,11 @@ public class LethalAdminUI : MonoBehaviour
                 break;
         }
 
+        GUILayout.FlexibleSpace(); // Fill box to the bottom
         GUILayout.EndScrollView();
-        GUILayout.FlexibleSpace();
         
         DefaultUI();
-        
+
         GUILayout.EndVertical();
         GUI.DragWindow(new Rect(0, 0, 10000, 500));
     }
@@ -114,14 +118,15 @@ public class LethalAdminUI : MonoBehaviour
     private void DefaultUI()
     {
         _toolbarInt = GUILayout.Toolbar(_toolbarInt, _toolbarStrings);
-        
+
         if (GUILayout.Button("Toggle ship lights"))
         {
             StartOfRound.Instance.shipRoomLights.ToggleShipLights();
         }
 
         if (StartOfRound.Instance.connectedPlayersAmount + 1 - StartOfRound.Instance.livingPlayers >= 1 &&
-            !TimeOfDay.Instance.shipLeavingAlertCalled) // Requires at least 1 dead player and that there has not been any early leave call
+            !TimeOfDay.Instance
+                .shipLeavingAlertCalled) // Requires at least 1 dead player and that there has not been any early leave call
         {
             if (GUILayout.Button("Override vote (will trigger auto pilot)"))
             {
@@ -132,10 +137,10 @@ public class LethalAdminUI : MonoBehaviour
                 time.VoteShipToLeaveEarly(); // Trigger the vote
             }
         }
-        
+
         _menuAlwaysOpen = GUILayout.Toggle(_menuAlwaysOpen, "Always show menu");
     }
-    
+
     private static void PrepareGui()
     {
         YellowText = new GUIStyle(GUI.skin.label)
