@@ -53,7 +53,7 @@ public static class BanHandler
     public static bool AddBan(ulong id, string username, string reason)
     {
         if (Bans.ContainsKey(id)) return false;
-        if (reason is null or "") reason = "None given";
+        if (reason is null or "") reason = "No reason given";
 
         Bans.Add(id, new BanInfo
         {

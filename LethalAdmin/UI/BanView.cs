@@ -49,7 +49,7 @@ public static class BanView
 
         if (GUILayout.Button("Unban user"))
         {
-            BanHandler.RemoveBan(_selectedBan.SteamID);
+            KickBanTools.UnbanPlayer(_selectedBan.SteamID);
             _selectedBan = null;
             return;
         }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using GameNetcodeStuff;
 using LethalAdmin.Bans;
 using LethalAdmin.Logging;
 using Steamworks;
@@ -27,10 +28,8 @@ public static class KickBanTools
         {
             Username = player.playerUsername,
             SteamID = player.playerSteamId,
-            UsingWalkie = player.speakingToWalkieTalkie,
             Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i),
-            IsWalkieOn = player.holdingWalkieTalkie,
-            IsSpeedCheating = player.isSpeedCheating,
+            WalkieMode = GetWalkieMode(player),
             IsPlayerDead = player.isPlayerDead
         }).ToList();
     }
@@ -66,14 +65,12 @@ public static class KickBanTools
     {
         if (BanHandler.RemoveBan(steamID))
         {
-            LethalLogger.AddLog(new Log(
-                $"[Ban] Could not unban {steamID}@steam as this user is not banned", "Warning"
-            ));
+            LethalLogger.AddLog(new Log($"[Ban] {steamID}@steam has been unbanned"));
         }
         else
         {
             LethalLogger.AddLog(new Log(
-                $"[Ban] {steamID}@steam has been unbanned"
+                $"[Ban] Could not unban {steamID}@steam as this user is not banned", "Warning"
             ));
         }
 
@@ -101,14 +98,22 @@ public static class KickBanTools
         LethalLogger.AddLog(new Log($"[ProfileCheck] {username} ({steamId}@steam))"));
     }
 
+    private static WalkieMode GetWalkieMode(PlayerControllerB player)
+    {
+        var mode = WalkieMode.Disabled;
+
+        if (player.holdingWalkieTalkie) mode = WalkieMode.Listening;
+        if (player.speakingToWalkieTalkie) mode = WalkieMode.Talking;
+
+        return mode;
+    }
+
     public class PlayerInfo
     {
         public string Username;
         public ulong SteamID;
-        public bool UsingWalkie;
         public bool Connected;
-        public bool IsWalkieOn;
-        public bool IsSpeedCheating;
+        public WalkieMode WalkieMode;
         public bool IsPlayerDead;
 
         public override string ToString()

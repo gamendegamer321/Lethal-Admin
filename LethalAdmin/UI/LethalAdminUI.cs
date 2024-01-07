@@ -19,7 +19,7 @@ public class LethalAdminUI : MonoBehaviour
 
     public static readonly GUILayoutOption[] LabelOptions =
     {
-        GUILayout.MinWidth(300)
+        GUILayout.Width(300)
     };
 
     public static readonly GUILayoutOption[] WideLabelOptions =
@@ -118,6 +118,7 @@ public class LethalAdminUI : MonoBehaviour
     private void DefaultUI()
     {
         _toolbarInt = GUILayout.Toolbar(_toolbarInt, _toolbarStrings);
+        GUILayout.Space(10);
 
         if (GUILayout.Button("Toggle ship lights"))
         {
