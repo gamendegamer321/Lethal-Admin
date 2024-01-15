@@ -15,7 +15,7 @@ namespace LethalAdmin.Patches
                 $"[Connect] {__instance.playerUsername} ({__instance.playerSteamId}@steam) has joined"
             ));
 
-            if (__instance.playerSteamId == 0)
+            if (__instance.playerSteamId == 0 && Plugin.Instance.RequireSteam)
             {
                 var playerInfo = new KickBanTools.PlayerInfo
                 {

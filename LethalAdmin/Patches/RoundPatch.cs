@@ -1,9 +1,6 @@
-using BepInEx.Logging;
 using HarmonyLib;
-using LethalAdmin.Bans;
 using LethalAdmin.Logging;
 using UnityEngine;
-using Logger = BepInEx.Logging.Logger;
 
 namespace LethalAdmin.Patches;
 
@@ -13,7 +10,7 @@ public static class RoundPatch
     [HarmonyPatch("KickPlayer")]
     [HarmonyPatch("Awake")]
     [HarmonyPostfix]
-    public static void OnKick(StartOfRound __instance) // Make sure only banned players are unable to rejoin
+    public static void OnKick() // Make sure only banned players are unable to rejoin
     {
         KickBanTools.UpdateKickedIDs();
     }

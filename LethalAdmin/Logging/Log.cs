@@ -5,7 +5,7 @@ namespace LethalAdmin.Logging;
 
 public class Log
 {
-    internal readonly string Prefix;
+    private readonly string _prefix;
     
     private readonly float _time = Time.realtimeSinceStartup;
     private readonly string _message;
@@ -13,12 +13,12 @@ public class Log
     public Log(string message, string prefix="Info")
     {
         _message = message;
-        Prefix = prefix;
+        _prefix = prefix;
     }
 
     public string GetTimeFormattedString()
     {
         var t = TimeSpan.FromSeconds(_time);
-        return $"[{t:hh':'mm':'ss}] [{Prefix}] {_message}";
+        return $"[{t:hh':'mm':'ss}] [{_prefix}] {_message}";
     }
 }

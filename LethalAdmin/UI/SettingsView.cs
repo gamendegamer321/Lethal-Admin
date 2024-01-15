@@ -1,14 +1,14 @@
 ﻿using System;
 using LethalAdmin.Logging;
-using LethalAdmin.UI;
 using UnityEngine;
 
-namespace LethalAdmin;
+namespace LethalAdmin.UI;
 
 public static class SettingsView
 {
     private static string _minVotes = Plugin.Instance.MinVotes.ToString();
     private static bool _leverLocked = Plugin.Instance.LockLever;
+    private static bool _requireSteam = Plugin.Instance.RequireSteam;
     
     private static string _settingsErrorMessage = "";
     
@@ -20,6 +20,7 @@ public static class SettingsView
         GUILayout.EndHorizontal();
 
         _leverLocked = GUILayout.Toggle(_leverLocked, "Only owner can start ship");
+        _requireSteam = GUILayout.Toggle(_requireSteam, "Require valid steam ID");
 
         if (GUILayout.Button("Apply settings"))
         {
@@ -36,7 +37,8 @@ public static class SettingsView
                 {
                     Plugin.Instance.MinVotes = newMinVotes;
                     Plugin.Instance.LockLever = _leverLocked;
-                    _settingsErrorMessage = "";
+                    Plugin.Instance.RequireSteam = _requireSteam;
+                    _settingsErrorMessage = "Successfully saved the settings!";
                 }
             }
             catch (FormatException)

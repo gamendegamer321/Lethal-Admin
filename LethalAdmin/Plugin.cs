@@ -10,17 +10,18 @@ namespace LethalAdmin
     [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string PluginVersion = "1.2.0";
-        
+        public const string PluginVersion = "1.3.0";
+
         public static Plugin Instance;
         public static string ConfigFolder;
-        
+
         private readonly Harmony _harmony = new("LethalAdmin");
         private const string ConfigSection = "Lethal Admin";
 
         private ConfigEntry<string> _bans;
         private ConfigEntry<int> _minVotesConfig;
         private ConfigEntry<bool> _lockLeverConfig;
+        private ConfigEntry<bool> _requireSteam;
 
         public int MinVotes
         {
@@ -31,13 +32,23 @@ namespace LethalAdmin
                 Config.Save();
             }
         }
-        
+
         public bool LockLever
         {
             get => _lockLeverConfig.Value;
             set
             {
                 _lockLeverConfig.Value = value;
+                Config.Save();
+            }
+        }
+
+        public bool RequireSteam
+        {
+            get => _requireSteam.Value;
+            set
+            {
+                _requireSteam.Value = value;
                 Config.Save();
             }
         }
@@ -57,11 +68,12 @@ namespace LethalAdmin
                 "The minimum amount of votes before the autopilot starts. Use a value of 1 to disable.");
             _lockLeverConfig = Config.Bind(ConfigSection, "leverLock", false,
                 "When enabled (true) the ship departure lever can only be used by the host.");
+            _requireSteam = Config.Bind(ConfigSection, "requireSteam", true,
+                "When enabled, clients attempting to join without a valid steamID will be denied");
 
             ConfigFolder = Path.GetDirectoryName(Config.ConfigFilePath);
-            
-            BanHandler.LoadBans();
 
+            BanHandler.LoadBans();
             if (_bans.Value != "Deprecated!")
             {
                 var bansList = _bans.Value.Split(",");
