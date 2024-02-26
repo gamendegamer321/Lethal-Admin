@@ -23,7 +23,6 @@ namespace LethalAdmin.Patches
                     SteamID = __instance.playerSteamId,
                     Connected = true, // Assuming the player is connected if this method is called
                     IsPlayerDead = __instance.isPlayerDead
-                    
                 };
 
                 KickBanTools.KickPlayer(playerInfo);

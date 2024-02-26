@@ -9,9 +9,10 @@ public static class SettingsView
     private static string _minVotes = Plugin.Instance.MinVotes.ToString();
     private static bool _leverLocked = Plugin.Instance.LockLever;
     private static bool _requireSteam = Plugin.Instance.RequireSteam;
-    
+    private static bool _furnitureLocked = Plugin.Instance.FurnitureLocked;
+
     private static string _settingsErrorMessage = "";
-    
+
     public static void DrawView()
     {
         GUILayout.BeginHorizontal();
@@ -21,6 +22,7 @@ public static class SettingsView
 
         _leverLocked = GUILayout.Toggle(_leverLocked, "Only owner can start ship");
         _requireSteam = GUILayout.Toggle(_requireSteam, "Require valid steam ID");
+        _furnitureLocked = GUILayout.Toggle(_furnitureLocked, "Only host can move furniture");
 
         if (GUILayout.Button("Apply settings"))
         {
@@ -38,6 +40,7 @@ public static class SettingsView
                     Plugin.Instance.MinVotes = newMinVotes;
                     Plugin.Instance.LockLever = _leverLocked;
                     Plugin.Instance.RequireSteam = _requireSteam;
+                    Plugin.Instance.FurnitureLocked = _furnitureLocked;
                     _settingsErrorMessage = "Successfully saved the settings!";
                 }
             }
