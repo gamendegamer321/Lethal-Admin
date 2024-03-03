@@ -16,6 +16,12 @@ public class LethalAdminUI : MonoBehaviour
         GUILayout.Width(900),
         GUILayout.Height(400)
     };
+    
+    private readonly GUILayoutOption[] _minimizedOptions =
+    {
+        GUILayout.Width(300),
+        GUILayout.Height(20)
+    };
 
     public static readonly GUILayoutOption[] LabelOptions =
     {
@@ -31,6 +37,7 @@ public class LethalAdminUI : MonoBehaviour
     public static GUIStyle WhiteText { get; private set; }
     public static GUIStyle YellowText { get; private set; }
     private static bool _guiPrepared;
+    private static bool _guiMinimized;
 
     private int _toolbarInt;
     private readonly string[] _toolbarStrings = { "Users", "Settings & Logs", "Bans" };
@@ -81,15 +88,29 @@ public class LethalAdminUI : MonoBehaviour
 
         var controlID = GUIUtility.GetControlID(FocusType.Passive);
         _windowRect = GUILayout.Window(controlID, _windowRect, DrawUI, "Lethal Admin Menu V" + Plugin.PluginVersion,
-            _options);
+            _guiMinimized ? _minimizedOptions : _options);
     }
 
     private void DrawUI(int windowID)
     {
+        if (_guiMinimized)
+        {
+            if (GUILayout.Button("Expand UI")) _guiMinimized = false;
+        }
+        else
+        {
+            ExpandedUI();
+        }
+
+        GUI.DragWindow(new Rect(0, 0, 10000, 500));
+    }
+
+    private void ExpandedUI()
+    {
         GUILayout.BeginVertical();
-        
+
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUI.skin.box);
-        
+
         switch (_toolbarInt)
         {
             case 0:
@@ -108,13 +129,12 @@ public class LethalAdminUI : MonoBehaviour
 
         GUILayout.FlexibleSpace(); // Fill box to the bottom
         GUILayout.EndScrollView();
-        
+
         DefaultUI();
 
         GUILayout.EndVertical();
-        GUI.DragWindow(new Rect(0, 0, 10000, 500));
     }
-
+    
     private void DefaultUI()
     {
         _toolbarInt = GUILayout.Toolbar(_toolbarInt, _toolbarStrings);
@@ -139,7 +159,14 @@ public class LethalAdminUI : MonoBehaviour
             }
         }
 
+        GUILayout.Space(20);
         _menuAlwaysOpen = GUILayout.Toggle(_menuAlwaysOpen, "Always show menu");
+        
+        if (GUILayout.Button("Minimize UI"))
+        {
+            _guiMinimized = true;
+            _menuAlwaysOpen = false;
+        }
     }
 
     private static void PrepareGui()
