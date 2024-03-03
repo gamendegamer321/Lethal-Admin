@@ -29,6 +29,12 @@
         <Reference Include="Newtonsoft.Json">
             <HintPath>..\external_dlls\Newtonsoft.Json.dll</HintPath>
         </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>..\external_dlls\UnityEngine.UI.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>..\external_dlls\Unity.TextMeshPro.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
