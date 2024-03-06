@@ -10,7 +10,7 @@ namespace LethalAdmin
     [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string PluginVersion = "1.4.0";
+        public const string PluginVersion = "1.5.0";
 
         public static Plugin Instance;
         public static string ConfigFolder;
