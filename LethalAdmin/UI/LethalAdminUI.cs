@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Logging;
@@ -12,7 +11,7 @@ namespace LethalAdmin.UI;
 public class LethalAdminUI : MonoBehaviour
 {
     private static readonly ManualLogSource ManualLogger = Logger.CreateLogSource("Admin UI");
-    
+
     private static readonly List<LethalAdminUI> Instances = new();
     private bool _menuOpen;
 
@@ -153,18 +152,9 @@ public class LethalAdminUI : MonoBehaviour
             StartOfRound.Instance.shipRoomLights.ToggleShipLights();
         }
 
-        if (StartOfRound.Instance.connectedPlayersAmount + 1 - StartOfRound.Instance.livingPlayers >= 1 &&
-            !TimeOfDay.Instance
-                .shipLeavingAlertCalled) // Requires at least 1 dead player and that there has not been any early leave call
+        if (RoundUtils.IsVoteOverrideAvailable() && GUILayout.Button("Override vote (will trigger auto pilot)"))
         {
-            if (GUILayout.Button("Override vote (will trigger auto pilot)"))
-            {
-                var time = TimeOfDay.Instance;
-                time.votesForShipToLeaveEarly =
-                    Math.Max(StartOfRound.Instance.connectedPlayersAmount, Plugin.Instance.MinVotes);
-                time.votedShipToLeaveEarlyThisRound = false; // Make sure the game is convinced we didn't vote yet
-                time.VoteShipToLeaveEarly(); // Trigger the vote
-            }
+            RoundUtils.OverrideVotes();
         }
 
         GUILayout.Space(20);
@@ -202,7 +192,7 @@ public class LethalAdminUI : MonoBehaviour
         };
 
         ManualLogger.LogInfo("Creating new button");
-        
+
         // Clone one of the menu buttons
         var parent = StartOfRound.Instance.localPlayerController.quickMenuManager.mainButtonsPanel.transform;
         var newButton =
@@ -210,7 +200,7 @@ public class LethalAdminUI : MonoBehaviour
             .FirstOrDefault();
 
         ManualLogger.LogInfo("Getting components");
-        
+
         // Make sure everything can be found
         if (newButton == null || !newButton.TryGetComponent<Button>(out var buttonComponent)
                               || !newButton.TryGetComponent<RectTransform>(out var buttonTransform))
@@ -221,9 +211,9 @@ public class LethalAdminUI : MonoBehaviour
         }
 
         ManualLogger.LogInfo("Getting components 2");
-        
+
         var text = newButton.GetComponentInChildren<TextMeshProUGUI>();
-        
+
         // Make sure we also got a text component in the children
         if (text == null)
         {
@@ -231,16 +221,16 @@ public class LethalAdminUI : MonoBehaviour
             Destroy(newButton);
             return;
         }
-        
+
         ManualLogger.LogInfo("Setting info");
 
         // Set the info for the new button
         text.text = "> Open Admin UI";
         buttonComponent.onClick = new Button.ButtonClickedEvent();
         buttonComponent.onClick.AddListener(() => { _guiEnabled = true; });
-        
+
         var localPosition = buttonTransform.localPosition;
-        buttonTransform.localPosition = new Vector3(localPosition.x, 100, localPosition.z);;
+        buttonTransform.localPosition = new Vector3(localPosition.x, 100, localPosition.z);
 
         ManualLogger.LogInfo("Completed");
     }
