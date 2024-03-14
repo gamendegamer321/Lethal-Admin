@@ -19,11 +19,13 @@ public class ConnectionPatch
     {
         __state = new RequestInformation();
 
+        // Don't run for the host
         if ((long)request.ClientNetworkId == (long)NetworkManager.Singleton.LocalClientId) return false;
 
         var str = Encoding.ASCII.GetString(request.Payload);
         var strArray = str.Split(",");
 
+        // Check if there is even a steam id given
         if (strArray.Length < 2)
         {
             if (!Plugin.Instance.RequireSteam) return true;
@@ -36,6 +38,7 @@ public class ConnectionPatch
 
         try
         {
+            // Try to parse the steam id
             steamId = ulong.Parse(strArray[1]);
         }
         catch (Exception)
@@ -55,7 +58,8 @@ public class ConnectionPatch
 
         if (BanHandler.TryGetBan(steamId, out var banInfo))
         {
-            DeclineConnection(ref __state, response, "You are banned from this lobby:\n" + banInfo.BanReason);
+            // Kick the user if they are banned, also giving the ban reason.
+            DeclineConnection(ref __state, response, "<b>You are banned from this lobby:</b>\n" + banInfo.BanReason);
             return false;
         }
         
@@ -67,10 +71,10 @@ public class ConnectionPatch
     [HarmonyPostfix]
     public static void AfterApproval(
         ref RequestInformation __state,
-        ref NetworkManager.ConnectionApprovalRequest request,
         NetworkManager.ConnectionApprovalResponse response)
     {
-        if (__state.IsDenied && response.Approved)
+        // Make sure that if we denied it in the prefix, it is still denied now.
+        if (__state != null && __state.IsDenied && response.Approved)
         {
             DeclineConnection(ref __state, response, __state.DenyReason);
         }
