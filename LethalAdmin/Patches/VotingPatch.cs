@@ -19,6 +19,7 @@ public class VotingPatch
         if (__instance.votesForShipToLeaveEarly + 1 >= Plugin.Instance.MinVotes) return true;
         
         __instance.votesForShipToLeaveEarly++; // Still increase vote count if we skip
+        __instance.AddVoteForShipToLeaveEarlyClientRpc();
         return false;
     }
 }

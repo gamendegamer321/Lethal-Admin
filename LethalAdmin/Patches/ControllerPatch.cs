@@ -15,19 +15,18 @@ namespace LethalAdmin.Patches
                 $"[Connect] {__instance.playerUsername} ({__instance.playerSteamId}@steam) has joined"
             ));
 
-            if (__instance.playerSteamId == 0 && Plugin.Instance.RequireSteam)
+            if (__instance.playerSteamId != 0 || !Plugin.Instance.RequireSteam ||
+                GameNetworkManager.Instance.disableSteam) return;
+            
+            var playerInfo = new KickBanTools.PlayerInfo
             {
-                var playerInfo = new KickBanTools.PlayerInfo
-                {
-                    Username = __instance.playerUsername,
-                    SteamID = __instance.playerSteamId,
-                    Connected = true, // Assuming the player is connected if this method is called
-                    IsPlayerDead = __instance.isPlayerDead
-                    
-                };
+                Username = __instance.playerUsername,
+                SteamID = __instance.playerSteamId,
+                Connected = true, // Assuming the player is connected if this method is called
+                IsPlayerDead = __instance.isPlayerDead
+            };
 
-                KickBanTools.KickPlayer(playerInfo);
-            }
+            KickBanTools.KickPlayer(playerInfo);
         }
     }
 }

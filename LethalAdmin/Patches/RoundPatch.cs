@@ -17,13 +17,11 @@ public static class RoundPatch
 
     [HarmonyPatch("EndGameClientRpc")]
     [HarmonyPostfix]
-    public static void OnShipLeave(StartOfRound __instance, object[] __args)
+    public static void OnShipLeave(StartOfRound __instance, int playerClientId)
     {
-        var playerID = (int)__args[0];
+        if (playerClientId >= __instance.allPlayerScripts.Length) return;
 
-        if (playerID >= __instance.allPlayerScripts.Length) return;
-
-        var script = __instance.allPlayerScripts[playerID];
+        var script = __instance.allPlayerScripts[playerClientId];
         LethalLogger.AddLog(new Log(
             $"[Departure] {script.playerUsername} ({script.playerSteamId}@steam) has started the ship"
         ));

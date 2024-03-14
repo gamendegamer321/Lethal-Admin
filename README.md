@@ -54,10 +54,15 @@ To disable the feature set the minimum to 1, as that is the default of the game.
 
 ## Host only ship lever
 
-WIth the host only ship lever it is possible to prevent people who are not the host from using the ship lever,
+With the host only ship lever it is possible to prevent people who are not the host from using the ship lever,
 this *only works in orbit* to ensure people can still leave a planet.
 This can be enabled or disabled using the "leverLock" config option, or in the admin menu.
 Disabling this config option will only take affect the next time you go into orbit.
+
+## Furniture lock (Host can only move furniture)
+
+When you have the furniture lock enabled, only the host will be able to move furnitre (like the bunkbeds and filing cabinets) 
+around and place them into storage. However it is still possible for other players to take items back out of storage.
 
 ## Actions
 

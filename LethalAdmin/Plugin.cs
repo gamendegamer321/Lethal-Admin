@@ -10,7 +10,7 @@ namespace LethalAdmin
     [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string PluginVersion = "1.3.0";
+        public const string PluginVersion = "1.5.0";
 
         public static Plugin Instance;
         public static string ConfigFolder;
@@ -22,6 +22,7 @@ namespace LethalAdmin
         private ConfigEntry<int> _minVotesConfig;
         private ConfigEntry<bool> _lockLeverConfig;
         private ConfigEntry<bool> _requireSteam;
+        private ConfigEntry<bool> _furnitureLocked;
 
         public int MinVotes
         {
@@ -53,9 +54,20 @@ namespace LethalAdmin
             }
         }
 
+        public bool FurnitureLocked
+        {
+            get => _furnitureLocked.Value;
+            set
+            {
+                _furnitureLocked.Value = value;
+                Config.Save();
+            }
+        }
+
         private void Awake()
         {
             Logger.LogInfo("Starting Lethal Admin");
+            _harmony.PatchAll(typeof(BuildingPatch));
             _harmony.PatchAll(typeof(ConnectionPatch));
             _harmony.PatchAll(typeof(RoundPatch));
             _harmony.PatchAll(typeof(MenuPatch));
@@ -70,7 +82,10 @@ namespace LethalAdmin
             _lockLeverConfig = Config.Bind(ConfigSection, "leverLock", false,
                 "When enabled (true) the ship departure lever can only be used by the host.");
             _requireSteam = Config.Bind(ConfigSection, "requireSteam", true,
-                "When enabled, clients attempting to join without a valid steamID will be denied");
+                "When enabled, clients attempting to join without a valid steamID will be denied.");
+            _furnitureLocked = Config.Bind(ConfigSection, "furnitureLocked", false,
+                "When enabled, this will only allow the host to move the furniture. " +
+                "This does NOT prevent furniture from being taken out of storage");
 
             ConfigFolder = Path.GetDirectoryName(Config.ConfigFilePath);
 
