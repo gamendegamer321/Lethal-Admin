@@ -84,14 +84,17 @@ public class LethalAdminUI : MonoBehaviour
 
     private void OnGUI()
     {
+        // Only show when you are the server (or are in debug mode)
+        if (!StartOfRound.Instance.IsServer && !Plugin.DebugMode) return;
+        
         // run once
         if (!_guiPrepared)
         {
             _guiPrepared = true;
             PrepareGui();
         }
-
-        if (!StartOfRound.Instance.IsServer || (!_menuOpen && !_menuAlwaysOpen) || !_guiEnabled) return;
+        
+        if ((!_menuOpen && !_menuAlwaysOpen) || !_guiEnabled) return;
 
         var controlID = GUIUtility.GetControlID(FocusType.Passive);
         _windowRect = GUILayout.Window(controlID, _windowRect, DrawUI, "Lethal Admin Menu V" + Plugin.PluginVersion,
@@ -191,15 +194,11 @@ public class LethalAdminUI : MonoBehaviour
             stretchWidth = false,
         };
 
-        ManualLogger.LogInfo("Creating new button");
-
         // Clone one of the menu buttons
         var parent = StartOfRound.Instance.localPlayerController.quickMenuManager.mainButtonsPanel.transform;
         var newButton =
             (from Transform child in parent where child.name == "Resume" select Instantiate(child.gameObject, parent))
             .FirstOrDefault();
-
-        ManualLogger.LogInfo("Getting components");
 
         // Make sure everything can be found
         if (newButton == null || !newButton.TryGetComponent<Button>(out var buttonComponent)
@@ -209,8 +208,6 @@ public class LethalAdminUI : MonoBehaviour
             Destroy(newButton);
             return;
         }
-
-        ManualLogger.LogInfo("Getting components 2");
 
         var text = newButton.GetComponentInChildren<TextMeshProUGUI>();
 
@@ -222,8 +219,6 @@ public class LethalAdminUI : MonoBehaviour
             return;
         }
 
-        ManualLogger.LogInfo("Setting info");
-
         // Set the info for the new button
         text.text = "> Open Admin UI";
         buttonComponent.onClick = new Button.ButtonClickedEvent();
@@ -231,7 +226,5 @@ public class LethalAdminUI : MonoBehaviour
 
         var localPosition = buttonTransform.localPosition;
         buttonTransform.localPosition = new Vector3(localPosition.x, 100, localPosition.z);
-
-        ManualLogger.LogInfo("Completed");
     }
 }
