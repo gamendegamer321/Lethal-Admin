@@ -14,7 +14,7 @@ public static class KickBanTools
         if (StartOfRound.Instance == null) return;
 
         StartOfRound.Instance.KickedClientIds.Clear();
-        foreach (var ban in BanHandler.Bans.Values)
+        foreach (var ban in BanHandler.GetBans())
         {
             StartOfRound.Instance.KickedClientIds.Add(ban.SteamID);
         }

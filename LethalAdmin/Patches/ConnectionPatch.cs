@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using BepInEx.Logging;
 using HarmonyLib;
 using LethalAdmin.Bans;
 using Unity.Netcode;
@@ -11,14 +10,17 @@ namespace LethalAdmin.Patches;
 public class ConnectionPatch
 {
     [HarmonyPatch("ConnectionApproval")]
-    [HarmonyBefore("BiggerLobby", "BiggerLobbyA")]
+    [HarmonyPriority(Priority.High)]
     [HarmonyPrefix]
     public static bool BanApproval(
-        NetworkManager.ConnectionApprovalRequest request,
+        ref RequestInformation __state,
+        ref NetworkManager.ConnectionApprovalRequest request,
         NetworkManager.ConnectionApprovalResponse response)
     {
+        __state = new RequestInformation();
+
         if ((long)request.ClientNetworkId == (long)NetworkManager.Singleton.LocalClientId) return false;
-        
+
         var str = Encoding.ASCII.GetString(request.Payload);
         var strArray = str.Split(",");
 
@@ -26,45 +28,69 @@ public class ConnectionPatch
         {
             if (!Plugin.Instance.RequireSteam) return true;
             
-            DeclineConnection(response, "This lobby requires steam authentication.");
+            DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
             return false;
-        };
-        
+        }
+
         ulong steamId;
 
         try
         {
-            steamId = ulong.Parse(strArray[2]);
+            steamId = ulong.Parse(strArray[1]);
         }
         catch (Exception)
         {
-            return true;
+            if (!Plugin.Instance.RequireSteam) return true;
+            
+            DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
+            return false;
         }
 
 
-        if (Plugin.Instance.RequireSteam)
+        if (Plugin.Instance.RequireSteam && steamId == 0)
         {
-            if (steamId == 0)
-            {
-                DeclineConnection(response, "This lobby requires steam authentication.");
-                return false;
-            }
+            DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
+            return false;
         }
 
-        if (BanHandler.Bans.TryGetValue(steamId, out var value))
+        if (BanHandler.TryGetBan(steamId, out var banInfo))
         {
-            DeclineConnection(response, "You are banned from this lobby:\n" + value.BanReason);
+            DeclineConnection(ref __state, response, "You are banned from this lobby:\n" + banInfo.BanReason);
             return false;
         }
         
         return true;
     }
 
-    private static void DeclineConnection(NetworkManager.ConnectionApprovalResponse response, string reason)
+    [HarmonyPatch("ConnectionApproval")]
+    [HarmonyPriority(Priority.Last)]
+    [HarmonyPostfix]
+    public static void AfterApproval(
+        ref RequestInformation __state,
+        ref NetworkManager.ConnectionApprovalRequest request,
+        NetworkManager.ConnectionApprovalResponse response)
     {
+        if (__state.IsDenied && response.Approved)
+        {
+            DeclineConnection(ref __state, response, __state.DenyReason);
+        }
+    }
+
+    private static void DeclineConnection(ref RequestInformation state, 
+        NetworkManager.ConnectionApprovalResponse response, string reason)
+    {
+        state.IsDenied = true;
+        state.DenyReason = reason;
+        
         response.Reason = reason;
         response.CreatePlayerObject = false;
         response.Approved = false;
         response.Pending = false;
+    }
+
+    public class RequestInformation
+    {
+        public bool IsDenied;
+        public string DenyReason;
     }
 }
