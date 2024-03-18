@@ -29,8 +29,6 @@ remain banned.
 When having require steam enabled, players with their steam id set to 0 will not be allowed to join. 
 Instead they will be kicked immediately after loading in.
 
-**Keep in mind that, when using LAN-mode, you need to disable this option in order for other players to join!**
-
 ### New ban system
 
 With the 1.3.0 update the mod is using a new ban system.
