@@ -8,7 +8,7 @@ namespace LethalAdmin.Bans;
 
 public static class BanHandler
 {
-    public static readonly Dictionary<ulong, BanInfo> Bans = new();
+    private static readonly Dictionary<ulong, BanInfo> Bans = new();
 
     public static void LoadBans()
     {
@@ -73,6 +73,13 @@ public static class BanHandler
         Bans.Remove(id);
         SaveBans();
         return true;
+    }
+    
+    public static IEnumerable<BanInfo> GetBans() => Bans.Values.ToArray();
+
+    public static bool TryGetBan(ulong id, out BanInfo banInfo)
+    {
+        return Bans.TryGetValue(id, out banInfo);
     }
 
     private static void SaveBans()

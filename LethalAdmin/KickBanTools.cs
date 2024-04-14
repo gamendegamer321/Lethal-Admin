@@ -11,10 +11,11 @@ public static class KickBanTools
 {
     public static void UpdateKickedIDs()
     {
+        // Still keep this so a mod that breaks the ConnectionPatch still uses the bans
         if (StartOfRound.Instance == null) return;
 
         StartOfRound.Instance.KickedClientIds.Clear();
-        foreach (var ban in BanHandler.Bans.Values)
+        foreach (var ban in BanHandler.GetBans())
         {
             StartOfRound.Instance.KickedClientIds.Add(ban.SteamID);
         }

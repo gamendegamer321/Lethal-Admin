@@ -20,7 +20,7 @@ public static class BanView
 
     private static void DrawBanList()
     {
-        foreach (var banInfo in BanHandler.Bans.Values)
+        foreach (var banInfo in BanHandler.GetBans())
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label($"{banInfo.Username} ({banInfo.SteamID}@steam)", LethalAdminUI.WideLabelOptions);
