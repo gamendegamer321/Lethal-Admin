@@ -225,6 +225,6 @@ public class LethalAdminUI : MonoBehaviour
         buttonComponent.onClick.AddListener(() => { _guiEnabled = true; });
 
         var localPosition = buttonTransform.localPosition;
-        buttonTransform.localPosition = new Vector3(localPosition.x, 100, localPosition.z);
+        buttonTransform.localPosition = new Vector3(localPosition.x, 0, localPosition.z);
     }
 }
