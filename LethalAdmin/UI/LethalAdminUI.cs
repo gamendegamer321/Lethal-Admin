@@ -42,19 +42,33 @@ public class LethalAdminUI : MonoBehaviour
     public static GUIStyle RedText { get; private set; }
     public static GUIStyle WhiteText { get; private set; }
     public static GUIStyle YellowText { get; private set; }
-    
+
     private static bool _guiPrepared;
     private static bool _guiMinimized;
     private static bool _guiEnabled = true;
-    
+
     private static RectTransform _menuButtonTransform;
 
     private int _toolbarInt;
-    private readonly string[] _toolbarStrings = { "Users", "Settings & Logs", "Bans", "Whitelist" };
 
+    private readonly IView[] _toolbarViews =
+    [
+        new UsersView(),
+        new SettingsView(),
+        new BanView(),
+        new WhitelistView()
+    ];
+
+    private readonly string[] _toolbarStrings;
     private Vector2 _scrollPosition;
     private bool _menuAlwaysOpen;
 
+    public LethalAdminUI()
+    {
+        // Get all view names as an array
+        _toolbarStrings = _toolbarViews.Select(view => view.GetViewName()).ToArray();
+    }
+    
     private void Awake()
     {
         Instances.Add(this);
@@ -85,19 +99,19 @@ public class LethalAdminUI : MonoBehaviour
         var localPosition = _menuButtonTransform.localPosition;
         _menuButtonTransform.localPosition = new Vector3(localPosition.x, newHeight, localPosition.z);
     }
-    
+
     private void OnGUI()
     {
         // Only show when you are the server (or are in debug mode)
         if (!StartOfRound.Instance.IsServer && !Plugin.DebugMode) return;
-        
+
         // run once
         if (!_guiPrepared)
         {
             _guiPrepared = true;
             PrepareGui();
         }
-        
+
         if ((!_menuOpen && !_menuAlwaysOpen) || !_guiEnabled) return;
 
         var controlID = GUIUtility.GetControlID(FocusType.Passive);
@@ -124,25 +138,9 @@ public class LethalAdminUI : MonoBehaviour
         GUILayout.BeginVertical();
 
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUI.skin.box);
-
-        switch (_toolbarInt)
-        {
-            case 0:
-                UsersView.DrawView();
-                break;
-            case 1:
-                SettingsView.DrawView();
-                break;
-            case 2:
-                BanView.DrawView();
-                break;
-            case 3:
-                WhitelistView.DrawView();
-                break;
-            default:
-                UsersView.DrawView();
-                break;
-        }
+        
+        // Draw the selected toolbar view
+        _toolbarViews[_toolbarInt].DrawView();
 
         GUILayout.FlexibleSpace(); // Fill box to the bottom
         GUILayout.EndScrollView();

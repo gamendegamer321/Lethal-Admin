@@ -3,11 +3,13 @@ using UnityEngine;
 
 namespace LethalAdmin.UI;
 
-public static class BanView
+public class BanView : IView
 {
     private static BanInfo _selectedBan;
     
-    public static void DrawView()
+    public string GetViewName() => "Bans";
+    
+    public void DrawView()
     {
         if (_selectedBan == null)
         {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LethalAdmin.UI;
 
-public static class SettingsView
+public class SettingsView : IView
 {
     private static string _minVotes = Plugin.Instance.MinVotes.ToString();
     private static int _buttonHeight = Plugin.Instance.ButtonHeight;
@@ -14,7 +14,9 @@ public static class SettingsView
 
     private static string _settingsErrorMessage = "";
 
-    public static void DrawView()
+    public string GetViewName() => "Settings & Logs";
+    
+    public void DrawView()
     {
         GUILayout.BeginHorizontal();
         GUILayout.Label("Minimum departure votes: ");

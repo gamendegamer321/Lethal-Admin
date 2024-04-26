@@ -3,12 +3,14 @@ using UnityEngine;
 
 namespace LethalAdmin.UI;
 
-public static class UsersView
+public class UsersView : IView
 {
     private static KickBanTools.PlayerInfo _selectedPlayer;
     private static string _banReason;
+
+    public string GetViewName() => "Users";
     
-    public static void DrawView()
+    public void DrawView()
     {
         if (_selectedPlayer == null)
         {

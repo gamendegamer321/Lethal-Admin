@@ -3,9 +3,11 @@ using UnityEngine;
 
 namespace LethalAdmin.UI;
 
-public class WhitelistView
+public class WhitelistView : IView
 {
-    public static void DrawView()
+    public string GetViewName() => "Whitelist";
+    
+    public void DrawView()
     {
         foreach (var whitelist in BanHandler.GetWhitelist())
         {
