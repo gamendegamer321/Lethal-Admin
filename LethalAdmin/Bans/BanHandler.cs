@@ -9,6 +9,7 @@ namespace LethalAdmin.Bans;
 public static class BanHandler
 {
     private static readonly Dictionary<ulong, BanInfo> Bans = new();
+    private static readonly Dictionary<ulong, WhitelistInfo> Whitelist = new();
 
     public static void LoadBans()
     {
@@ -27,6 +28,11 @@ public static class BanHandler
         foreach (var ban in banList.Bans)
         {
             Bans.Add(ban.SteamID, ban);
+        }
+
+        foreach (var whitelist in banList.Whitelist)
+        {
+            Whitelist.Add(whitelist.SteamID, whitelist);
         }
 
         KickBanTools.UpdateKickedIDs();
@@ -50,6 +56,29 @@ public static class BanHandler
         SaveBans();
     }
 
+    public static bool AddWhitelist(ulong id, string username)
+    {
+        if (Whitelist.ContainsKey(id)) return false;
+        
+        Whitelist.Add(id, new WhitelistInfo
+        {
+            SteamID = id,
+            Username = username
+        });
+        
+        SaveBans();
+        return true;
+    }
+
+    public static bool RemoveWhitelist(ulong id)
+    {
+        if (!Whitelist.ContainsKey(id)) return false;
+
+        Whitelist.Remove(id);
+        SaveBans();
+        return true;
+    }
+    
     public static bool AddBan(ulong id, string username, string reason)
     {
         if (Bans.ContainsKey(id)) return false;
@@ -75,11 +104,17 @@ public static class BanHandler
         return true;
     }
     
-    public static IEnumerable<BanInfo> GetBans() => Bans.Values.ToArray();
+    public static IEnumerable<BanInfo> GetBans() => Bans.Values;
+    public static IEnumerable<WhitelistInfo> GetWhitelist() => Whitelist.Values;
 
     public static bool TryGetBan(ulong id, out BanInfo banInfo)
     {
         return Bans.TryGetValue(id, out banInfo);
+    }
+
+    public static bool IsWhitelisted(ulong id)
+    {
+        return Whitelist.Keys.Contains(id);
     }
 
     private static void SaveBans()
@@ -87,7 +122,8 @@ public static class BanHandler
         var banPath = Path.Combine(Plugin.ConfigFolder, "gamendegamer.lethaladmin.json");
         var banList = new BanList
         {
-            Bans = Bans.Values.ToList()
+            Bans = Bans.Values.ToList(),
+            Whitelist = Whitelist.Values.ToList()
         };
 
         var json = JsonConvert.SerializeObject(banList);
