@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using LethalAdmin.Bans;
+using UnityEngine;
 
 namespace LethalAdmin.UI;
 
@@ -75,6 +76,22 @@ public static class UsersView
         {
             KickBanTools.ShowProfile(_selectedPlayer.Username, _selectedPlayer.SteamID);
         }
+
+        if (BanHandler.IsWhitelisted(_selectedPlayer.SteamID))
+        {
+            if (GUILayout.Button("Remove from whitelist"))
+            {
+                BanHandler.RemoveWhitelist(_selectedPlayer.SteamID);
+            }
+        }
+        else
+        {
+            if (GUILayout.Button("Add to whitelist"))
+            {
+                BanHandler.AddWhitelist(_selectedPlayer.SteamID, _selectedPlayer.Username);
+            }
+        }
+        
         
         if (GUILayout.Button("Kick"))
         {

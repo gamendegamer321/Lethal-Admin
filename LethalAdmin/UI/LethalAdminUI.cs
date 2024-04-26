@@ -50,7 +50,7 @@ public class LethalAdminUI : MonoBehaviour
     private static RectTransform _menuButtonTransform;
 
     private int _toolbarInt;
-    private readonly string[] _toolbarStrings = { "Users", "Settings & Logs", "Bans" };
+    private readonly string[] _toolbarStrings = { "Users", "Settings & Logs", "Bans", "Whitelist" };
 
     private Vector2 _scrollPosition;
     private bool _menuAlwaysOpen;
@@ -135,6 +135,9 @@ public class LethalAdminUI : MonoBehaviour
                 break;
             case 2:
                 BanView.DrawView();
+                break;
+            case 3:
+                WhitelistView.DrawView();
                 break;
             default:
                 UsersView.DrawView();
