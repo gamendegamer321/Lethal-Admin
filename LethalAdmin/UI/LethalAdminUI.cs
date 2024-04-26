@@ -42,9 +42,12 @@ public class LethalAdminUI : MonoBehaviour
     public static GUIStyle RedText { get; private set; }
     public static GUIStyle WhiteText { get; private set; }
     public static GUIStyle YellowText { get; private set; }
+    
     private static bool _guiPrepared;
     private static bool _guiMinimized;
     private static bool _guiEnabled = true;
+    
+    private static RectTransform _menuButtonTransform;
 
     private int _toolbarInt;
     private readonly string[] _toolbarStrings = { "Users", "Settings & Logs", "Bans" };
@@ -73,15 +76,16 @@ public class LethalAdminUI : MonoBehaviour
 
         foreach (var instance in Instances)
         {
-            instance.SetMenu(value);
+            instance._menuOpen = value;
         }
     }
 
-    private void SetMenu(bool value)
+    public static void UpdateButtonHeight(int newHeight)
     {
-        _menuOpen = value;
+        var localPosition = _menuButtonTransform.localPosition;
+        _menuButtonTransform.localPosition = new Vector3(localPosition.x, newHeight, localPosition.z);
     }
-
+    
     private void OnGUI()
     {
         // Only show when you are the server (or are in debug mode)
@@ -202,7 +206,7 @@ public class LethalAdminUI : MonoBehaviour
 
         // Make sure everything can be found
         if (newButton == null || !newButton.TryGetComponent<Button>(out var buttonComponent)
-                              || !newButton.TryGetComponent<RectTransform>(out var buttonTransform))
+                              || !newButton.TryGetComponent<RectTransform>(out _menuButtonTransform))
         {
             ManualLogger.LogWarning("Could not find all components to create new button!");
             Destroy(newButton);
@@ -224,7 +228,6 @@ public class LethalAdminUI : MonoBehaviour
         buttonComponent.onClick = new Button.ButtonClickedEvent();
         buttonComponent.onClick.AddListener(() => { _guiEnabled = true; });
 
-        var localPosition = buttonTransform.localPosition;
-        buttonTransform.localPosition = new Vector3(localPosition.x, 0, localPosition.z);
+        UpdateButtonHeight(Plugin.Instance.ButtonHeight);
     }
 }

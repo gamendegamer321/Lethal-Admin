@@ -10,7 +10,7 @@ namespace LethalAdmin
     [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string PluginVersion = "1.7.0";
+        public const string PluginVersion = "1.7.1";
 
         public static Plugin Instance;
         public static string ConfigFolder;
@@ -29,6 +29,7 @@ namespace LethalAdmin
         private ConfigEntry<bool> _lockLeverConfig;
         private ConfigEntry<bool> _requireSteam;
         private ConfigEntry<bool> _furnitureLocked;
+        private ConfigEntry<int> _buttonHeight;
 
         public int MinVotes
         {
@@ -70,6 +71,16 @@ namespace LethalAdmin
             }
         }
 
+        public int ButtonHeight
+        {
+            get => _buttonHeight.Value;
+            set
+            {
+                _buttonHeight.Value = value;
+                Config.Save();
+            }
+        }
+
         private void Awake()
         {
             Logger.LogInfo("Starting Lethal Admin");
@@ -92,6 +103,8 @@ namespace LethalAdmin
             _furnitureLocked = Config.Bind(ConfigSection, "furnitureLocked", false,
                 "When enabled, this will only allow the host to move the furniture. " +
                 "This does NOT prevent furniture from being taken out of storage");
+            _buttonHeight = Config.Bind(ConfigSection, "buttonHeight", 200,
+                "The height the open UI button appears at in the pause menu. Recommended to change from within the game.");
 
             ConfigFolder = Path.GetDirectoryName(Config.ConfigFilePath);
 

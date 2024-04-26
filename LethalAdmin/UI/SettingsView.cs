@@ -7,6 +7,7 @@ namespace LethalAdmin.UI;
 public static class SettingsView
 {
     private static string _minVotes = Plugin.Instance.MinVotes.ToString();
+    private static int _buttonHeight = Plugin.Instance.ButtonHeight;
     private static bool _leverLocked = Plugin.Instance.LockLever;
     private static bool _requireSteam = Plugin.Instance.RequireSteam;
     private static bool _furnitureLocked = Plugin.Instance.FurnitureLocked;
@@ -20,6 +21,11 @@ public static class SettingsView
         _minVotes = GUILayout.TextField(_minVotes);
         GUILayout.EndHorizontal();
 
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Open UI button height: ");
+        _buttonHeight = (int)GUILayout.HorizontalSlider(_buttonHeight, 0, 400);
+        GUILayout.EndHorizontal();
+        
         _leverLocked = GUILayout.Toggle(_leverLocked, "Only owner can start ship");
         _requireSteam = GUILayout.Toggle(_requireSteam, "Require valid steam ID");
         _furnitureLocked = GUILayout.Toggle(_furnitureLocked, "Only host can move furniture");
@@ -38,6 +44,7 @@ public static class SettingsView
                 else
                 {
                     Plugin.Instance.MinVotes = newMinVotes;
+                    Plugin.Instance.ButtonHeight = _buttonHeight;
                     Plugin.Instance.LockLever = _leverLocked;
                     Plugin.Instance.RequireSteam = _requireSteam;
                     Plugin.Instance.FurnitureLocked = _furnitureLocked;
@@ -61,5 +68,7 @@ public static class SettingsView
         {
             GUILayout.Label(log.GetTimeFormattedString());
         }
+        
+        LethalAdminUI.UpdateButtonHeight(_buttonHeight);
     }
 }
