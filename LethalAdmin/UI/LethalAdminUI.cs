@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Logging;
+using LethalAdmin.Logging;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,11 +11,6 @@ namespace LethalAdmin.UI;
 public class LethalAdminUI : MonoBehaviour
 {
     private static readonly ManualLogSource ManualLogger = Logger.CreateLogSource("Admin UI");
-
-    private static readonly List<LethalAdminUI> Instances = new();
-    private bool _menuOpen;
-
-    private Rect _windowRect;
 
     private readonly GUILayoutOption[] _options =
     {
@@ -42,14 +37,18 @@ public class LethalAdminUI : MonoBehaviour
     public static GUIStyle RedText { get; private set; }
     public static GUIStyle WhiteText { get; private set; }
     public static GUIStyle YellowText { get; private set; }
-
-    private static bool _guiPrepared;
+    
     private static bool _guiMinimized;
     private static bool _guiEnabled = true;
 
+    private static LethalAdminUI _instance;
+    
+    private static bool _menuButtonFailed;
     private static RectTransform _menuButtonTransform;
 
     private int _toolbarInt;
+    private bool _menuOpen;
+    private Rect _windowRect;
 
     private readonly IView[] _toolbarViews =
     [
@@ -71,27 +70,34 @@ public class LethalAdminUI : MonoBehaviour
     
     private void Awake()
     {
-        Instances.Add(this);
+        if (_instance != this)
+        {
+            Destroy(_instance);
+        }
+
+        _instance = this;
     }
 
     private void OnDestroy()
     {
-        Instances.Remove(this);
+        if (_instance == this)
+        {
+            _instance = null;
+        }
     }
 
     public static void SetMenuForAll(bool value)
     {
-        if (Instances.Count == 0 && value)
+        if (!_instance)
         {
             // Create new UI if we want to make it visible, but there exists none yet
             var obj = new GameObject("Lethal Admin UI");
             obj.AddComponent<LethalAdminUI>();
+            
+            ManualLogger.LogInfo("Generating UI");
         }
-
-        foreach (var instance in Instances)
-        {
-            instance._menuOpen = value;
-        }
+        
+        _instance._menuOpen = value;
     }
 
     public static void UpdateButtonHeight(int newHeight)
@@ -105,10 +111,9 @@ public class LethalAdminUI : MonoBehaviour
         // Only show when you are the server (or are in debug mode)
         if (!StartOfRound.Instance.IsServer && !Plugin.DebugMode) return;
 
-        // run once
-        if (!_guiPrepared)
+        // run if there is no button yet
+        if (!_menuButtonTransform && !_menuButtonFailed)
         {
-            _guiPrepared = true;
             PrepareGui();
         }
 
@@ -209,8 +214,8 @@ public class LethalAdminUI : MonoBehaviour
         if (newButton == null || !newButton.TryGetComponent<Button>(out var buttonComponent)
                               || !newButton.TryGetComponent<RectTransform>(out _menuButtonTransform))
         {
-            ManualLogger.LogWarning("Could not find all components to create new button!");
-            Destroy(newButton);
+            
+            FailedUI(newButton);
             return;
         }
 
@@ -219,8 +224,7 @@ public class LethalAdminUI : MonoBehaviour
         // Make sure we also got a text component in the children
         if (text == null)
         {
-            ManualLogger.LogWarning("Could not find all components to create new button!");
-            Destroy(newButton);
+            FailedUI(newButton);
             return;
         }
 
@@ -230,5 +234,13 @@ public class LethalAdminUI : MonoBehaviour
         buttonComponent.onClick.AddListener(() => { _guiEnabled = true; });
 
         UpdateButtonHeight(Plugin.Instance.ButtonHeight);
+    }
+
+    private static void FailedUI(GameObject obj)
+    {
+        _menuButtonFailed = true;
+        LethalLogger.AddLog(new Log("Failed to create the UI button, restart your game!"));
+        ManualLogger.LogWarning("Could not find all components to create new button!");
+        Destroy(obj);
     }
 }
