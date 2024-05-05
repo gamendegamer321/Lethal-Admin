@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LethalAdmin.Bans;
 using Unity.Netcode;
 
 namespace LethalAdmin.Patches;
@@ -20,6 +21,13 @@ public class BuildingPatch
         int playerId, bool movingToStorage)
     {
         if (playerId == 0 || !Plugin.Instance.FurnitureLocked || !__instance.IsServer) return true;
+        
+        // Whitelisted players are allowed to move furniture
+        var players = StartOfRound.Instance.allPlayerScripts;
+        if (playerId < players.Length && BanHandler.IsWhitelisted(players[playerId].playerSteamId))
+        {
+            return true;
+        }
 
         if (!objectRef.TryGet(out var networkObject))
         {
