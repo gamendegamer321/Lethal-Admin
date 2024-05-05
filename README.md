@@ -18,7 +18,8 @@ left of the button.
 
 Because we have overwriten the ingame kick/ban system, a kicked player is able to rejoin, but a banned player is not.
 
-You can unban a player in the Bans tab by clicking the View ban info button for that player and then using the unban button.
+You can unban a player in the Bans tab by clicking the View ban info button for that player and then using the unban
+button.
 When viewing a players ban you are also able to open their steam profile and view the reason for their ban.
 
 Your bans will be saved to your drive, meaning that even after a reboot of the game, the players you have banned will
@@ -26,7 +27,7 @@ remain banned.
 
 ### Require steam
 
-When having require steam enabled, players with their steam id set to 0 will not be allowed to join. 
+When having require steam enabled, players with their steam id set to 0 will not be allowed to join.
 Instead they will be kicked immediately after loading in.
 
 ### New ban system
@@ -37,7 +38,8 @@ The goal is to give the lobby host more information about previous bans they hav
 and possibly in the future to show the ban reason when a player attempts to rejoin a lobby they have been banned from.
 
 Any previous bans will automatically be transferred to the new ban system,
-these players will still have their username set as "UNKNOWN" and will be given the default ban reason ("No reason given").
+these players will still have their username set as "UNKNOWN" and will be given the default ban reason ("No reason
+given").
 
 ## Radio
 
@@ -59,8 +61,11 @@ Disabling this config option will only take affect the next time you go into orb
 
 ## Furniture lock (Host can only move furniture)
 
-When you have the furniture lock enabled, only the host will be able to move furnitre (like the bunkbeds and filing cabinets) 
+When you have the furniture lock enabled, only the host will be able to move furnitre (like the bunkbeds and filing
+cabinets)
 around and place them into storage. However it is still possible for other players to take items back out of storage.
+
+**Whitelisted players will still be able to move furniture, even if the furniture lock is enabled!**
 
 ## Actions
 

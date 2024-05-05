@@ -28,7 +28,7 @@ public class ConnectionPatch
         // Check if there is even a steam id given
         if (strArray.Length < 2)
         {
-            if (!Plugin.Instance.RequireSteam) return true;
+            if (!Plugin.Instance.RequireSteam || GameNetworkManager.Instance.disableSteam) return true;
             
             DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
             return false;
@@ -43,7 +43,7 @@ public class ConnectionPatch
         }
         catch (Exception)
         {
-            if (!Plugin.Instance.RequireSteam) return true;
+            if (!Plugin.Instance.RequireSteam || GameNetworkManager.Instance.disableSteam) return true;
             
             DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
             return false;
