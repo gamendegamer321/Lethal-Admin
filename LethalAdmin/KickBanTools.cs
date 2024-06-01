@@ -31,7 +31,8 @@ public static class KickBanTools
             SteamID = player.playerSteamId,
             Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i),
             WalkieMode = GetWalkieMode(player),
-            IsPlayerDead = player.isPlayerDead
+            IsPlayerDead = player.isPlayerDead,
+            PlayerController = player
         }).ToList();
     }
 
@@ -116,6 +117,7 @@ public static class KickBanTools
         public bool Connected;
         public WalkieMode WalkieMode;
         public bool IsPlayerDead;
+        public PlayerControllerB PlayerController;
 
         public override string ToString()
         {
