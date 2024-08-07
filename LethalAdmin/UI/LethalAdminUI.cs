@@ -37,12 +37,12 @@ public class LethalAdminUI : MonoBehaviour
     public static GUIStyle RedText { get; private set; }
     public static GUIStyle WhiteText { get; private set; }
     public static GUIStyle YellowText { get; private set; }
-    
+
     private static bool _guiMinimized;
     private static bool _guiEnabled = true;
 
     private static LethalAdminUI _instance;
-    
+
     private static bool _menuButtonFailed;
     private static RectTransform _menuButtonTransform;
 
@@ -67,7 +67,7 @@ public class LethalAdminUI : MonoBehaviour
         // Get all view names as an array
         _toolbarStrings = _toolbarViews.Select(view => view.GetViewName()).ToArray();
     }
-    
+
     private void Awake()
     {
         if (_instance != this)
@@ -76,6 +76,7 @@ public class LethalAdminUI : MonoBehaviour
         }
 
         _instance = this;
+        _guiEnabled = Plugin.Instance.OpenUIOnStart;
     }
 
     private void OnDestroy()
@@ -93,10 +94,10 @@ public class LethalAdminUI : MonoBehaviour
             // Create new UI if we want to make it visible, but there exists none yet
             var obj = new GameObject("Lethal Admin UI");
             obj.AddComponent<LethalAdminUI>();
-            
+
             ManualLogger.LogInfo("Generating UI");
         }
-        
+
         _instance._menuOpen = value;
     }
 
@@ -143,7 +144,7 @@ public class LethalAdminUI : MonoBehaviour
         GUILayout.BeginVertical();
 
         _scrollPosition = GUILayout.BeginScrollView(_scrollPosition, GUI.skin.box);
-        
+
         // Draw the selected toolbar view
         _toolbarViews[_toolbarInt].DrawView();
 
@@ -214,7 +215,6 @@ public class LethalAdminUI : MonoBehaviour
         if (newButton == null || !newButton.TryGetComponent<Button>(out var buttonComponent)
                               || !newButton.TryGetComponent<RectTransform>(out _menuButtonTransform))
         {
-            
             FailedUI(newButton);
             return;
         }

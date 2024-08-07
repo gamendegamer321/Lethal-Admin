@@ -30,6 +30,7 @@ namespace LethalAdmin
         private ConfigEntry<bool> _requireSteam;
         private ConfigEntry<bool> _furnitureLocked;
         private ConfigEntry<int> _buttonHeight;
+        private ConfigEntry<bool> _openUIOnStart;
 
         public int MinVotes
         {
@@ -81,6 +82,16 @@ namespace LethalAdmin
             }
         }
 
+        public bool OpenUIOnStart
+        {
+            get => _openUIOnStart.Value;
+            set
+            {
+                _openUIOnStart.Value = value;
+                Config.Save();
+            }
+        }
+
         private void Awake()
         {
             Logger.LogInfo("Starting Lethal Admin");
@@ -105,6 +116,8 @@ namespace LethalAdmin
                 "This does NOT prevent furniture from being taken out of storage");
             _buttonHeight = Config.Bind(ConfigSection, "buttonHeight", 200,
                 "The height the open UI button appears at in the pause menu. Recommended to change from within the game.");
+            _openUIOnStart = Config.Bind(ConfigSection, "openUIOnStart", true,
+                "Whether to automatically show the UI when the user goes to the pause menu the first time.");
 
             ConfigFolder = Path.GetDirectoryName(Config.ConfigFilePath);
 
