@@ -21,7 +21,7 @@ public class BuildingPatch
         int playerId, bool movingToStorage)
     {
         if (playerId == 0 || !Plugin.Instance.FurnitureLocked || !__instance.IsServer) return true;
-        
+
         // Whitelisted players are allowed to move furniture
         var players = StartOfRound.Instance.allPlayerScripts;
         if (playerId < players.Length && BanHandler.IsWhitelisted(players[playerId].playerSteamId))
@@ -54,9 +54,10 @@ public class BuildingPatch
         else
         {
             // Place the object back to the correct place
-            __instance.PlaceShipObjectClientRpc(item.placedPosition, item.placedRotation, objectRef, 0);
+            var transform = component.transform;
+            __instance.PlaceShipObjectClientRpc(transform.position, transform.rotation.eulerAngles, objectRef, 0);
         }
-        
+
         return false;
     }
 }
