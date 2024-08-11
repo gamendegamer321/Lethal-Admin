@@ -55,7 +55,8 @@ public class BuildingPatch
         {
             // Place the object back to the correct place
             var transform = component.transform;
-            __instance.PlaceShipObjectClientRpc(transform.position, transform.rotation.eulerAngles, objectRef, 0);
+            __instance.PlaceShipObjectClientRpc(transform.position, component.mainMesh.transform.rotation.eulerAngles,
+                objectRef, 0);
         }
 
         return false;
