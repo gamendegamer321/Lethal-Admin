@@ -3,16 +3,14 @@ using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
 using LethalAdmin.Bans;
-using LethalAdmin.Logging;
 using LethalAdmin.Patches;
-using Steamworks;
 
 namespace LethalAdmin
 {
     [BepInPlugin("gamendegamer.lethaladmin", "Lethal Admin", PluginVersion)]
     public class Plugin : BaseUnityPlugin
     {
-        public const string PluginVersion = "1.9.2";
+        public const string PluginVersion = "1.10.0";
 
         public static Plugin Instance;
         public static string ConfigFolder;

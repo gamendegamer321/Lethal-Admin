@@ -25,6 +25,11 @@ When viewing a players ban you are also able to open their steam profile and vie
 Your bans will be saved to your drive, meaning that even after a reboot of the game, the players you have banned will
 remain banned.
 
+While the player is still being approved by the game, they will already show up in your user list as "Player without
+script". If, after being approved, the player is not visible on the menu provided by the game, they should remain
+visible in the admin menu as "Player without script" allowing you to kick the player. **You can only kick the player
+after their connection is approved, not while their approval is pending!**
+
 ### Require steam
 
 When having require steam enabled, players with their steam id set to 0 will not be allowed to join.
