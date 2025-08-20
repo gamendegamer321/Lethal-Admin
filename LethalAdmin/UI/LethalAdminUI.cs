@@ -161,6 +161,13 @@ public class LethalAdminUI : MonoBehaviour
         _toolbarInt = GUILayout.Toolbar(_toolbarInt, _toolbarStrings);
         GUILayout.Space(10);
 
+        if (GUILayout.Button("Log debug information"))
+        {
+            LethalLogger.AddLog(new Log(
+                $"disableSteam: {GameNetworkManager.Instance.disableSteam}, transport: {GameNetworkManager.Instance.transport != null}"
+            ));
+        }
+
         if (GUILayout.Button("Toggle ship lights"))
         {
             StartOfRound.Instance.shipRoomLights.ToggleShipLights();

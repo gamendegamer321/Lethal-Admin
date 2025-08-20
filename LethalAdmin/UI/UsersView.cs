@@ -36,7 +36,7 @@ public class UsersView : IView
         {
             GUILayout.BeginHorizontal();
 
-            if (player.Connected || player.SteamID != 0)
+            if (player.ConnectionState != ConnectionState.Disconnected || player.SteamID != 0)
             {
                 GUILayout.Label($"({id}) {player}",
                     player.IsPlayerDead ? LethalAdminUI.RedText : LethalAdminUI.WhiteText, LethalAdminUI.LabelOptions);
@@ -76,12 +76,14 @@ public class UsersView : IView
         GUILayout.Label($"Walkie talkie: {_selectedPlayer.WalkieMode}");
         GUILayout.Space(20);
 
-        if (!_selectedPlayer.IsPlayerDead && GUILayout.Button("Kill player"))
+        if (_selectedPlayer.ConnectionState == ConnectionState.Connected && !_selectedPlayer.IsPlayerDead &&
+            GUILayout.Button("Kill player"))
         {
             _selectedPlayer.PlayerController.DamagePlayerFromOtherClientServerRpc(10000, Vector3.zero, 0);
         }
 
-        if (!_selectedPlayer.IsPlayerDead && GUILayout.Button("Teleport to player"))
+        if (_selectedPlayer.ConnectionState == ConnectionState.Connected && !_selectedPlayer.IsPlayerDead &&
+            GUILayout.Button("Teleport to player"))
         {
             Round.localPlayerController.TeleportPlayer(_selectedPlayer.PlayerController.transform.position);
         }

@@ -4,6 +4,7 @@ using GameNetcodeStuff;
 using LethalAdmin.Bans;
 using LethalAdmin.Logging;
 using Steamworks;
+using Unity.Netcode;
 
 namespace LethalAdmin;
 
@@ -24,16 +25,34 @@ public static class KickBanTools
     public static List<PlayerInfo> GetPlayers()
     {
         var playerControllers = StartOfRound.Instance.allPlayerScripts;
-
-        return playerControllers.Select((player, i) => new PlayerInfo
+        var result = playerControllers.Select((player, i) => new PlayerInfo
         {
             Username = player.playerUsername,
             SteamID = player.playerSteamId,
-            Connected = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i),
+            ConnectionState = StartOfRound.Instance.fullyLoadedPlayers.Contains((ulong)i)
+                ? ConnectionState.Connected
+                : ConnectionState.Disconnected,
             WalkieMode = GetWalkieMode(player),
             IsPlayerDead = player.isPlayerDead,
             PlayerController = player
         }).ToList();
+
+        // Any IDs not in the list, add them here
+        foreach (var id in ConnectionTracker.SteamIds.Where(x => result.All(y => x.Value != y.SteamID)))
+        {
+            result.Add(new PlayerInfo
+            {
+                Username = "Player without script",
+                SteamID = id,
+                ConnectionState = ConnectionTracker.SteamIdsToNetworkIds.ContainsKey(id.Value)
+                    ? ConnectionState.OnlySteamConnected
+                    : ConnectionState.Disconnected,
+                WalkieMode = WalkieMode.Disabled,
+                IsPlayerDead = false
+            });
+        }
+
+        return result;
     }
 
     public static void BanPlayer(PlayerInfo playerInfo, string reason = null)
@@ -83,14 +102,35 @@ public static class KickBanTools
     {
         var playerControllers = StartOfRound.Instance.allPlayerScripts;
 
+        var kicked = false;
         for (var id = 0; id < playerControllers.Length; id++)
         {
             var controller = playerControllers[id];
-            if (controller.playerUsername != playerInfo.Username
-                || controller.playerSteamId != playerInfo.SteamID) continue; // Both username and steamID need to match
+            if (controller.playerSteamId != playerInfo.SteamID) continue;
 
             StartOfRound.Instance.KickPlayer(id);
             LethalLogger.AddLog(new Log($"[Kick] {playerInfo} has been kicked (id={id})"));
+            kicked = true;
+        }
+
+        if (kicked || playerInfo.SteamID == 0 || !Plugin.Instance.SteamChecker) return;
+
+        LethalLogger.AddLog(new Log($"[Kick] {playerInfo} could not be kicked, no matching player controller"));
+        if (playerInfo.ConnectionState == ConnectionState.OnlySteamConnected)
+        {
+            if (ConnectionTracker.SteamIdsToNetworkIds.TryGetValue(playerInfo.SteamID, out var connectionId))
+            {
+                LethalLogger.AddLog(new Log(
+                    $"[Kick] Only a steam connection found, attempting to force stop the connection! (con. id={connectionId})"
+                ));
+                NetworkManager.Singleton.DisconnectClient(connectionId);
+            }
+            else
+            {
+                LethalLogger.AddLog(new Log(
+                    "[Kick] Could not find the connection associated with the steam ID, kicking is not possible for this user!"
+                ));
+            }
         }
     }
 
@@ -114,7 +154,7 @@ public static class KickBanTools
     {
         public string Username;
         public ulong SteamID;
-        public bool Connected;
+        public ConnectionState ConnectionState;
         public WalkieMode WalkieMode;
         public bool IsPlayerDead;
         public PlayerControllerB PlayerController;

@@ -5,7 +5,7 @@ namespace LethalAdmin.Patches;
 [HarmonyPatch(typeof(TimeOfDay))]
 public class VotingPatch
 {
-    [HarmonyPatch("SetShipLeaveEarlyServerRpc")]
+    [HarmonyPatch(nameof(TimeOfDay.SetShipLeaveEarlyServerRpc))]
     [HarmonyPrefix]
     public static bool OnServerVote(TimeOfDay __instance)
     {

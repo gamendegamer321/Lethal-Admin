@@ -3,7 +3,9 @@ using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
 using LethalAdmin.Bans;
+using LethalAdmin.Logging;
 using LethalAdmin.Patches;
+using Steamworks;
 
 namespace LethalAdmin
 {
@@ -31,6 +33,7 @@ namespace LethalAdmin
         private ConfigEntry<bool> _furnitureLocked;
         private ConfigEntry<int> _buttonHeight;
         private ConfigEntry<bool> _openUIOnStart;
+        private ConfigEntry<bool> _steamChecker;
 
         public int MinVotes
         {
@@ -92,6 +95,16 @@ namespace LethalAdmin
             }
         }
 
+        public bool SteamChecker
+        {
+            get => _steamChecker.Value;
+            set
+            {
+                _steamChecker.Value = value;
+                Config.Save();
+            }
+        }
+
         private void Awake()
         {
             Logger.LogInfo("Starting Lethal Admin");
@@ -118,6 +131,8 @@ namespace LethalAdmin
                 "The height the open UI button appears at in the pause menu. Recommended to change from within the game.");
             _openUIOnStart = Config.Bind(ConfigSection, "openUIOnStart", true,
                 "Whether to automatically show the UI when the user goes to the pause menu the first time.");
+            _steamChecker = Config.Bind(ConfigSection, "steamChecker", true,
+                "When enabled will do an additional attempt to kick a player");
 
             ConfigFolder = Path.GetDirectoryName(Config.ConfigFilePath);
 
@@ -130,6 +145,7 @@ namespace LethalAdmin
                 Config.Save();
             }
 
+            ConnectionTracker.RegisterEvents();
             Logger.LogInfo("Finished starting Lethal Admin");
         }
     }

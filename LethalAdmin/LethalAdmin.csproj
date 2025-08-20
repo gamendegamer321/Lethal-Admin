@@ -18,10 +18,13 @@
 
     <ItemGroup>
         <Reference Include="Assembly-CSharp">
-            <HintPath>..\external_dlls\Assembly-CSharp.dll</HintPath>
+            <HintPath>..\external_dlls\Assembly-CSharp-publicized.dll</HintPath>
         </Reference>
         <Reference Include="Facepunch.Steamworks.Win64">
             <HintPath>..\external_dlls\Facepunch.Steamworks.Win64.dll</HintPath>
+        </Reference>
+        <Reference Include="Facepunch Transport for Netcode for GameObjects">
+            <HintPath>..\external_dlls\Facepunch Transport for Netcode for GameObjects.dll</HintPath>
         </Reference>
         <Reference Include="Netcode">
             <HintPath>..\external_dlls\Unity.Netcode.Runtime.dll</HintPath>

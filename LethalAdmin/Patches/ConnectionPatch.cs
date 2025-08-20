@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using LethalAdmin.Bans;
+using LethalAdmin.Logging;
 using Unity.Netcode;
 
 namespace LethalAdmin.Patches;
@@ -9,7 +11,7 @@ namespace LethalAdmin.Patches;
 [HarmonyPatch(typeof(GameNetworkManager))]
 public class ConnectionPatch
 {
-    [HarmonyPatch("ConnectionApproval")]
+    [HarmonyPatch(nameof(GameNetworkManager.ConnectionApproval))]
     [HarmonyPriority(Priority.High)]
     [HarmonyPrefix]
     public static bool BanApproval(
@@ -29,7 +31,7 @@ public class ConnectionPatch
         if (strArray.Length < 2)
         {
             if (!Plugin.Instance.RequireSteam || GameNetworkManager.Instance.disableSteam) return true;
-            
+
             DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
             return false;
         }
@@ -44,7 +46,7 @@ public class ConnectionPatch
         catch (Exception)
         {
             if (!Plugin.Instance.RequireSteam || GameNetworkManager.Instance.disableSteam) return true;
-            
+
             DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
             return false;
         }
@@ -56,6 +58,17 @@ public class ConnectionPatch
             return false;
         }
 
+        if (Plugin.Instance.RequireSteam && Plugin.Instance.SteamChecker &&
+            ConnectionTracker.SteamIds.All(x => x.Value != steamId))
+        {
+            LethalLogger.AddLog(new Log(
+                $"[Connect] Connection request for steamId {steamId} denied"
+            ));
+
+            DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
+            return false;
+        }
+        
         if (BanHandler.TryGetBan(steamId, out var banInfo))
         {
             // Kick the user if they are banned, also giving the ban reason.
@@ -63,10 +76,11 @@ public class ConnectionPatch
             return false;
         }
         
+        ConnectionTracker.SteamIdsToNetworkIds[steamId] = request.ClientNetworkId;
         return true;
     }
 
-    [HarmonyPatch("ConnectionApproval")]
+    [HarmonyPatch(nameof(GameNetworkManager.ConnectionApproval))]
     [HarmonyPriority(Priority.Last)]
     [HarmonyPostfix]
     public static void AfterApproval(
@@ -80,12 +94,20 @@ public class ConnectionPatch
         }
     }
 
-    private static void DeclineConnection(ref RequestInformation state, 
+    [HarmonyPatch(nameof(GameNetworkManager.StartHost))]
+    [HarmonyPrefix]
+    public static void StartHost()
+    {
+        ConnectionTracker.SteamIds.Clear();
+        ConnectionTracker.SteamIdsToNetworkIds.Clear();
+    }
+
+    private static void DeclineConnection(ref RequestInformation state,
         NetworkManager.ConnectionApprovalResponse response, string reason)
     {
         state.IsDenied = true;
         state.DenyReason = reason;
-        
+
         response.Reason = reason;
         response.CreatePlayerObject = false;
         response.Approved = false;

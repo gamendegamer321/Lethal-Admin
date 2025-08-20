@@ -7,7 +7,7 @@ namespace LethalAdmin.Patches
     [HarmonyPatch(typeof(PlayerControllerB))]
     public class ControllerPatch
     {
-        [HarmonyPatch("ConnectClientToPlayerObject")]
+        [HarmonyPatch(nameof(PlayerControllerB.ConnectClientToPlayerObject))]
         [HarmonyPostfix]
         public static void OnPlayerJoin(PlayerControllerB __instance)
         {
@@ -22,7 +22,7 @@ namespace LethalAdmin.Patches
             {
                 Username = __instance.playerUsername,
                 SteamID = __instance.playerSteamId,
-                Connected = true, // Assuming the player is connected if this method is called
+                ConnectionState = ConnectionState.Connected, // Assuming the player is connected if this method is called
                 IsPlayerDead = __instance.isPlayerDead
             };
 

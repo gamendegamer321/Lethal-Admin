@@ -7,15 +7,15 @@ namespace LethalAdmin.Patches;
 [HarmonyPatch(typeof(StartOfRound))]
 public static class RoundPatch
 {
-    [HarmonyPatch("KickPlayer")]
-    [HarmonyPatch("Awake")]
+    [HarmonyPatch(nameof(StartOfRound.KickPlayer))]
+    [HarmonyPatch(nameof(StartOfRound.Awake))]
     [HarmonyPostfix]
     public static void OnKick() // Make sure only banned players are unable to rejoin
     {
         KickBanTools.UpdateKickedIDs();
     }
 
-    [HarmonyPatch("EndGameClientRpc")]
+    [HarmonyPatch(nameof(StartOfRound.EndGameClientRpc))]
     [HarmonyPostfix]
     public static void OnShipLeave(StartOfRound __instance, int playerClientId)
     {
@@ -27,7 +27,7 @@ public static class RoundPatch
         ));
     }
     
-    [HarmonyPatch("StartGameServerRpc")]
+    [HarmonyPatch(nameof(StartOfRound.StartGameServerRpc))]
     [HarmonyPrefix]
     public static bool NonServerStartGame(StartOfRound __instance)
     {

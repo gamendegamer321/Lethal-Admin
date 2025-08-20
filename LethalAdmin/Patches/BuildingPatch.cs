@@ -7,12 +7,12 @@ namespace LethalAdmin.Patches;
 [HarmonyPatch(typeof(ShipBuildModeManager))]
 public class BuildingPatch
 {
-    [HarmonyPatch("StoreObjectServerRpc")]
+    [HarmonyPatch(nameof(ShipBuildModeManager.StoreObjectServerRpc))]
     [HarmonyPrefix]
     public static bool OnStoreObject(ShipBuildModeManager __instance, ref NetworkObjectReference objectRef,
         int playerWhoStored) => OnBuild(__instance, ref objectRef, playerWhoStored, true);
 
-    [HarmonyPatch("PlaceShipObjectServerRpc")]
+    [HarmonyPatch(nameof(ShipBuildModeManager.PlaceShipObjectServerRpc))]
     [HarmonyPrefix]
     public static bool OnPlacingObject(ShipBuildModeManager __instance, ref NetworkObjectReference objectRef,
         int playerWhoMoved) => OnBuild(__instance, ref objectRef, playerWhoMoved, false);

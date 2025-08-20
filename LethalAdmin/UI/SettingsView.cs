@@ -11,6 +11,7 @@ public class SettingsView : IView
     private static bool _leverLocked = Plugin.Instance.LockLever;
     private static bool _requireSteam = Plugin.Instance.RequireSteam;
     private static bool _furnitureLocked = Plugin.Instance.FurnitureLocked;
+    private static bool _steamChecker = Plugin.Instance.SteamChecker;
 
     private static string _settingsErrorMessage = "";
 
@@ -31,6 +32,7 @@ public class SettingsView : IView
         _leverLocked = GUILayout.Toggle(_leverLocked, "Only owner can start ship");
         _requireSteam = GUILayout.Toggle(_requireSteam, "Require valid steam ID");
         _furnitureLocked = GUILayout.Toggle(_furnitureLocked, "Only host can move furniture");
+        _steamChecker = GUILayout.Toggle(_steamChecker, "[Experimental] Additional kick attempt");
 
         if (GUILayout.Button("Apply settings"))
         {
@@ -50,6 +52,7 @@ public class SettingsView : IView
                     Plugin.Instance.LockLever = _leverLocked;
                     Plugin.Instance.RequireSteam = _requireSteam;
                     Plugin.Instance.FurnitureLocked = _furnitureLocked;
+                    Plugin.Instance.SteamChecker = _steamChecker;
                     _settingsErrorMessage = "Successfully saved the settings!";
                 }
             }
