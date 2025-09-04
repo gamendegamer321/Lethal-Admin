@@ -42,21 +42,20 @@ script". If, after being approved, the player is not visible on the menu provide
 visible in the admin menu as "Player without script" allowing you to kick the player. **You can only kick the player
 after their connection is approved, not while their approval is pending!**
 
+> [!NOTE]
+> With the 1.3.0 update the mod is using a new ban system.
+> With this ban system it is possible to store a reason for a ban and the username of the banned user.
+> The goal is to give the lobby host more information about previous bans they have given,
+> and possibly in the future to show the ban reason when a player attempts to rejoin a lobby they have been banned from.
+> 
+> Any previous bans will automatically be transferred to the new ban system,
+> these players will still have their username set as "UNKNOWN" and will be given the default ban reason ("No reason
+> given").
+
 ### Require steam
 
 When having require steam enabled, players with their steam id set to 0 will not be allowed to join.
 Instead, they will be kicked immediately after loading in.
-
-### New ban system
-
-With the 1.3.0 update the mod is using a new ban system.
-With this ban system it is possible to store a reason for a ban and the username of the banned user.
-The goal is to give the lobby host more information about previous bans they have given,
-and possibly in the future to show the ban reason when a player attempts to rejoin a lobby they have been banned from.
-
-Any previous bans will automatically be transferred to the new ban system,
-these players will still have their username set as "UNKNOWN" and will be given the default ban reason ("No reason
-given").
 
 ## Radio
 
