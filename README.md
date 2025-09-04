@@ -1,10 +1,22 @@
-# Lethal Admin
+[![GitHub release](https://flat.badgen.net/github/release/gamendegamer321/Lethal-Admin/)](https://github.com/gamendegamer321/Lethal-Admin/releases/latest)
+[![Game Version](https://flat.badgen.net/static/Game%20Version/v47+)](https://github.com/gamendegamer321/Lethal-Admin/)
+[![License](https://flat.badgen.net/github/license/gamendegamer321/Lethal-Admin/)](https://github.com/gamendegamer321/Lethal-Admin/blob/master/LICENSE)
 
-An admin tool for lethal company.
+# About Lethal Admin
 
-## Manual Installation
+An admin tool for lethal company. Intended to help with moderating your lobbies and prevent the people that have been
+banned from joining, even after restarting the lobby.
 
-Download the ``LethalAdmin.dll`` and paste the dll into ``path_to_lethal_company/BepInEx/Plugins``
+# Installation
+
+Download the latest release from [GitHub](https://github.com/gamendegamer321/Lethal-Admin/releases/latest)
+or the [Thunderstore](https://thunderstore.io/c/lethal-company/p/gamendegamer/Lethal_Admin/) and paste the dll
+into `path_to_lethal_company/BepInEx/Plugins`
+
+# Usage
+
+When hosting a game the lethal admin UI will be available from your pause menu.
+You can minimize or even hide this UI using the buttons at the bottom of the menu.
 
 ## Kicking and banning
 
@@ -33,7 +45,7 @@ after their connection is approved, not while their approval is pending!**
 ### Require steam
 
 When having require steam enabled, players with their steam id set to 0 will not be allowed to join.
-Instead they will be kicked immediately after loading in.
+Instead, they will be kicked immediately after loading in.
 
 ### New ban system
 
@@ -62,13 +74,13 @@ To disable the feature set the minimum to 1, as that is the default of the game.
 With the host only ship lever it is possible to prevent people who are not the host from using the ship lever,
 this *only works in orbit* to ensure people can still leave a planet.
 This can be enabled or disabled using the "leverLock" config option, or in the admin menu.
-Disabling this config option will only take affect the next time you go into orbit.
+Disabling this config option will only take effect the next time you go into orbit.
 
 ## Furniture lock (Host can only move furniture)
 
 When you have the furniture lock enabled, only the host will be able to move furnitre (like the bunkbeds and filing
 cabinets)
-around and place them into storage. However it is still possible for other players to take items back out of storage.
+around and place them into storage. However, it is still possible for other players to take items back out of storage.
 
 **Whitelisted players will still be able to move furniture, even if the furniture lock is enabled!**
 
