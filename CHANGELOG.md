@@ -1,3 +1,8 @@
+# v1.10.1 (pre-release)
+
+- Force disconnect if a player leaves the lobby, but keeps a connection
+- Only allow a Steam ID to connect once, any attempts after establishing the first connection are blocked until the first connection stops (player disconnects or is kicked)
+
 # v1.10.0
 
 - Added option to do an additional kick attempt on players using steam, this will directly close the connection to the

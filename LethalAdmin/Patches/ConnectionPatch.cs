@@ -54,15 +54,30 @@ public class ConnectionPatch
 
         if (Plugin.Instance.RequireSteam && steamId == 0)
         {
+            LethalLogger.AddLog(new Log(
+                $"[Connect] Connection request for empty steam ID denied"
+            ));
+            
             DeclineConnection(ref __state, response, "This lobby requires steam authentication.");
             return false;
         }
 
         if (Plugin.Instance.RequireSteam && Plugin.Instance.SteamChecker &&
-            ConnectionTracker.SteamIds.All(x => x.Value != steamId))
+            (ConnectionTracker.SteamIds.All(x => x.Value != steamId) || // 
+             ConnectionTracker.SteamIdsToNetworkIds.ContainsKey(steamId))) // A player with this steam ID is already connected
         {
+            var reason = "UNKNOWN";
+            if (ConnectionTracker.SteamIds.All(x => x.Value != steamId))
+            {
+                reason = "Not in lobby";
+            }
+            else if (ConnectionTracker.SteamIdsToNetworkIds.ContainsKey(steamId))
+            {
+                reason = "Already joined";
+            }
+            
             LethalLogger.AddLog(new Log(
-                $"[Connect] Connection request for steamId {steamId} denied"
+                $"[Connect] Connection request for steamId {steamId} denied ({reason})"
             ));
 
             DeclineConnection(ref __state, response, "This lobby requires steam authentication.");

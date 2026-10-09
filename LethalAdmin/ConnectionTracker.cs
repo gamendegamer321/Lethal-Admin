@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using LethalAdmin.Logging;
 using Steamworks;
 using Steamworks.Data;
+using Unity.Netcode;
 
 namespace LethalAdmin;
 
@@ -15,11 +16,11 @@ public static class ConnectionTracker
     {
         SteamMatchmaking.OnLobbyMemberJoined += OnJoinedLobby;
         SteamMatchmaking.OnLobbyMemberLeave += OnLeftLobby;
+        NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnect;
     }
 
     private static void OnJoinedLobby(Lobby lobby, Friend friend)
     {
-        LethalLogger.AddLog(new Log($"Friend joined with steamID: {friend.Id}"));
         SteamIds.Clear();
         SteamIds.AddRange(lobby.Members.Select(x => x.Id));
 
@@ -40,8 +41,31 @@ public static class ConnectionTracker
 
     private static void OnLeftLobby(Lobby lobby, Friend friend)
     {
-        LethalLogger.AddLog(new Log($"Friend left with steamID: {friend.Id}"));
+        try
+        {
+            if (SteamIdsToNetworkIds.TryGetValue(friend.Id, out var connectionId))
+            {
+                NetworkManager.Singleton.DisconnectClient(connectionId);
+            }
+        }
+        catch (Exception)
+        {
+            // Just make sure there isn't an exception here, as we need to be sure the code below runs
+        }
+
         SteamIds.Remove(friend.Id);
         SteamIdsToNetworkIds.Remove(friend.Id);
+    }
+
+    private static void ClientDisconnect(ulong connectionId)
+    {
+        foreach (var pair in SteamIdsToNetworkIds)
+        {
+            if (pair.Value == connectionId)
+            {
+                SteamIds.Remove(pair.Key);
+                SteamIdsToNetworkIds.Remove(pair.Key);
+            }
+        }
     }
 }
